@@ -79,12 +79,15 @@ model_weights/
 runs/
 wandb/
 
+# Dataset directory
+dataset/
+data/
+*.csv.gz
+
 # Cheminformatics temporary cache & conformer dumps
 .rdkit_cache/
 *.sdf.gz
 *.mol2.gz
-dataset/classification_combined.csv
-dataset/regression_combined.csv
 
 # Logs and databases
 *.log
