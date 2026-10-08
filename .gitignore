@@ -121,3 +121,17 @@ run_eda_nb.py
 scratch/
 tmp/
 temp/
+
+# LaTeX auxiliary build files
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+
