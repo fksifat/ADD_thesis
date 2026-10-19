@@ -165,7 +165,7 @@ Approaches to uncertainty estimation include Monte Carlo Dropout \cite{kendall20
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.34\textheight,keepaspectratio]{../figures/new_arc_2.png}
+    \includegraphics[width=\textwidth]{../figures/new_arc_2.jpeg}
     \caption{Comprehensive architectural workflow of TriBioNode v2. Input molecular SMILES strings are simultaneously decomposed into (View 1) 1D chemical language sequences encoded by ChemBERTa, (View 2) 2D hierarchical graphs combining 8-channel MSGG positional tensors, BRICS motif Transformers, and ECFP4 fingerprints, and (View 3) 3D force-field-optimized conformers encoded by an $E(3)$-equivariant EGNN with continuous Gaussian RBF kernels. Embeddings are harmonized via Tri-Modal InfoNCE contrastive regularization ($\mathcal{L}_{\text{CL}}$), dynamically weighted via an input-dependent gating network $\bm{\alpha}(\mathbf{x})$, fused through a Cross-Modal Transformer, and passed to a Deep Ensemble uncertainty prediction head.}
     \label{fig:architecture}
 \end{figure*}
