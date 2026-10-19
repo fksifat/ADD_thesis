@@ -27,13 +27,13 @@
 \renewcommand{\topfraction}{0.95}
 \renewcommand{\bottomfraction}{0.95}
 \renewcommand{\textfraction}{0.05}
-\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\floatpagefraction}{0.70}
 \renewcommand{\dbltopfraction}{0.95}
-\renewcommand{\dblfloatpagefraction}{0.80}
-\setcounter{topnumber}{5}
-\setcounter{bottomnumber}{5}
-\setcounter{totalnumber}{10}
-\setcounter{dbltopnumber}{5}
+\renewcommand{\dblfloatpagefraction}{0.70}
+\setcounter{topnumber}{6}
+\setcounter{bottomnumber}{6}
+\setcounter{totalnumber}{12}
+\setcounter{dbltopnumber}{6}
 
 % Hyperlink styling
 \hypersetup{
@@ -165,7 +165,7 @@ Approaches to uncertainty estimation include Monte Carlo Dropout \cite{kendall20
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth]{../figures/new_arc_2.jpeg}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/new_arc_2.jpeg}
     \caption{Comprehensive architectural workflow of TriBioNode v2. Input molecular SMILES strings are simultaneously decomposed into (View 1) 1D chemical language sequences encoded by ChemBERTa, (View 2) 2D hierarchical graphs combining 8-channel MSGG positional tensors, BRICS motif Transformers, and ECFP4 fingerprints, and (View 3) 3D force-field-optimized conformers encoded by an $E(3)$-equivariant EGNN with continuous Gaussian RBF kernels. Embeddings are harmonized via Tri-Modal InfoNCE contrastive regularization ($\mathcal{L}_{\text{CL}}$), dynamically weighted via an input-dependent gating network $\bm{\alpha}(\mathbf{x})$, fused through a Cross-Modal Transformer, and passed to a Deep Ensemble uncertainty prediction head.}
     \label{fig:architecture}
 \end{figure*}
@@ -196,7 +196,7 @@ As illustrated in \textbf{Figure \ref{fig:view1_rep}}, self-attention saliency m
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth]{../figures/view1_chemical_language_grammar.png}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/view1_chemical_language_grammar.png}
     \caption{Visual representation of View 1: 1D Chemical Language \& Grammar (ChemBERTa Transformer). For three structurally diverse benchmark molecules (Fenarimol analog, Spiro-Hydantoin complex, and Anthanthrene PAH), the tokenized SMILES sequence stream is displayed alongside normalized self-attention saliency distributions, highlighting how the chemical language model concentrates attention on polar heteroatoms ($\text{-OH}$, $\text{-Cl}$, $\text{N}$) and branching ring closures. The resulting 128-dimensional latent signal vector $\mathbf{h}_{v1} \in \mathbb{R}^{128}$ is visualized as an $8 \times 16$ attention-head matrix alongside unimodal prediction metrics.}
     \label{fig:view1_rep}
 \end{figure*}
@@ -242,7 +242,7 @@ where $\mathbf{h}_{\text{hier}} = [\mathbf{h}_{\text{atom}} \parallel \mathbf{h}
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth]{../figures/view2_hierarchical_graph_motifs.png}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/view2_hierarchical_graph_motifs.png}
     \caption{Visual representation of View 2: 2D Hierarchical Atom-Motif Graph. Molecular graphs are segmented into color-coded BRICS functional motifs (e.g., 4-chlorophenyl, pyrimidine, tertiary carbinol core), contractable into high-level motif super-nodes. The 8-dimensional MSGG joint channels encode multi-scale interface features including bond orders, ring confinement, $\pi$-conjugation, hybridization pairs ($sp^2-sp^2$, $sp^2-sp^3$), and topological distances. The 128-dimensional pooled graph representation $\mathbf{h}_{v2}$ is displayed alongside unimodal evaluation metrics.}
     \label{fig:view2_rep}
 \end{figure*}
@@ -277,14 +277,14 @@ As shown in the Multi-View Complementarity Matrix (\textbf{Figure \ref{fig:compl
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth]{../figures/view3_3d_spatial_equivariant_conformer.png}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/view3_3d_spatial_equivariant_conformer.png}
     \caption{Visual representation of View 3: 3D Spatial Equivariant Conformer ($E(3)$-EGNN). (Left) 3D ball-and-stick spatial conformer geometries optimized via ETKDGv3 and MMFF94 force field. (Center) All-to-all pairwise interatomic Euclidean distance field $D_{ij} = \|\mathbf{x}_i - \mathbf{x}_j\|_2$ (expanded via Gaussian RBF kernels $\mu_k \in [0, 10]\text{ \AA}$) providing complete spatial coordinate metrics ($R_g$, 3D span) with a dedicated distance scale. (Right) The coordinate-invariant 128-dimensional pooled conformer representation vector $\mathbf{h}_{v3} \in \mathbb{R}^{128}$ displayed alongside unimodal evaluation metrics.}
     \label{fig:view3_rep}
 \end{figure*}
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.92\columnwidth]{../figures/07_multiview_complementarity_matrix.png}
+    \includegraphics[width=\columnwidth]{../figures/07_multiview_complementarity_matrix.png}
     \caption{Multi-View Complementarity Matrix illustrating Pearson cross-correlation and mutual information metrics between 1D ChemBERTa sequence tokens, 2D Hierarchical MSGG graph features, and 3D EGNN spatial conformer invariants. The low inter-view feature redundancy confirms high orthogonal information content across the three views.}
     \label{fig:complementarity}
 \end{figure}
@@ -350,6 +350,7 @@ The composite training loss for each ensemble member is regularized by the contr
 \label{eq:total_loss}
 \end{equation}
 
+\FloatBarrier
 % ==============================================================================
 % SECTION 4: EXPERIMENTAL SETUP & BENCHMARK PROTOCOL
 % ==============================================================================
@@ -368,14 +369,14 @@ To comprehensively evaluate TriBioNode v2 across chemical domains, we assembled 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/01_dataset_scale_and_domain_breakdown.png}
+        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/01_dataset_scale_and_domain_breakdown.png}
         \caption{Overview of the 16 benchmark datasets categorized across biophysics classification, ADMET toxicology, physicochemical properties, and quantum mechanics.}
         \label{fig:dataset_scale}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/08_bemis_murcko_scaffold_diversity.png}
+        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/08_bemis_murcko_scaffold_diversity.png}
         \caption{Scaffold diversity spectrum across benchmark datasets under Bemis-Murcko splitting, showing severe distribution shifts between train and test partitions.}
         \label{fig:scaffold_diversity}
     \end{subfigure}
@@ -400,6 +401,7 @@ Classification performance is evaluated using the Area Under the Receiver Operat
 
 Models were optimized using AdamW ($\beta_1 = 0.9, \beta_2 = 0.999$, weight decay $= 10^{-5}$) with a Cosine Annealing learning rate schedule initialized at $\eta_0 = 10^{-4}$ following a 5-epoch linear warmup. Gradient clipping ($\|\mathbf{g}\|_2 \le 1.0$) was enforced for training stability. Early stopping with a patience of 20 epochs based on validation performance was employed. All experiments were conducted on an NVIDIA RTX 3090 GPU (24GB VRAM) and AMD Ryzen 9 processor running PyTorch 2.2, PyG, and RDKit 2023.09.
 
+\FloatBarrier
 % ==============================================================================
 % SECTION 5: RESULTS & COMPREHENSIVE DISCUSSION
 % ==============================================================================
@@ -491,7 +493,7 @@ On extended TDC ADMET pharmacokinetic benchmarks (\textbf{Table \ref{tab:tdc_adm
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=0.98\textwidth]{../figures/12_multiview_comparative_performance.png}
+    \includegraphics[width=\textwidth,height=0.30\textheight,keepaspectratio]{../figures/12_multiview_comparative_performance.png}
     \caption{Multi-Modal Comparative Performance Analysis on Delaney Aqueous Solubility (ESOL). (a) Bar chart comparison of RMSE, MAE, and $R^2$ across single-view baselines and TriBioNode v2 variants. (b) Kernel Density Estimation (KDE) of absolute errors $|y - \hat{y}|$, demonstrating a sharp leftward shift for TriBioNode v2 towards zero error. (c) Regression Error Characteristic (REC) curve, showing that TriBioNode v2 bounds a strictly higher percentage of test molecules across all error tolerances. (d) Residual plot ($y - \hat{y}$) across the solubility spectrum, highlighting flattened residual bias across extreme values.}
     \label{fig:multiview_perf}
 \end{figure*}
@@ -502,7 +504,7 @@ The error density distribution (\textbf{Figure \ref{fig:multiview_perf}(b)}) dem
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=0.98\textwidth]{../figures/13_multiview_latent_manifold_tsne.png}
+    \includegraphics[width=\textwidth,height=0.20\textheight,keepaspectratio]{../figures/13_multiview_latent_manifold_tsne.png}
     \caption{Multi-View Latent Manifold Topology via t-SNE Dimensionality Reduction. Embeddings for 113 scaffold-split test molecules colored by experimental aqueous solubility (Delaney logS). (a) View 1 (1D ChemBERTa) captures localized sequence syntax. (b) View 2 (2D Hierarchical Graph) reflects scaffold clustering. (c) View 3 (3D EGNN) preserves spatial geometric surface area. (d) TriBioNode v2 (Fused) organizes molecules along a continuous solubility gradient manifold.}
     \label{fig:latent_tsne}
 \end{figure*}
@@ -542,7 +544,7 @@ t-SNE dimensionality reduction of latent spaces (\textbf{Figure \ref{fig:latent_
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.95\columnwidth]{../figures/11_systematic_architecture_ablation.png}
+    \includegraphics[width=\columnwidth]{../figures/11_systematic_architecture_ablation.png}
     \caption{Systematic Architectural Ablation Study illustrating test set RMSE degradation across isolated single-view, dual-view, and architectural ablations relative to the complete TriBioNode v2 framework.}
     \label{fig:ablation_chart}
 \end{figure}
@@ -562,14 +564,14 @@ To quantify the individual contribution of each component in TriBioNode v2, we c
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/09_dynamic_view_gating_allocation.png}
+        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/09_dynamic_view_gating_allocation.png}
         \caption{Dynamic Attention View Gating distributions ($\bm{\alpha}$) across diverse biophysical, physicochemical, and quantum mechanical tasks.}
         \label{fig:gating_allocation}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/14_dynamic_gating_mechanistic_analysis.png}
+        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/14_dynamic_gating_mechanistic_analysis.png}
         \caption{Mechanistic correlation of dynamic gating weights with aromatic ring count ($N_{\text{arom}}$), lipophilicity ($\log P$), and molecular flexibility ($F_{sp3}$).}
         \label{fig:gating_mechanisms}
     \end{subfigure}
@@ -589,7 +591,7 @@ To examine how TriBioNode v2 adaptively shifts modality reliance across chemical
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=0.98\textwidth]{../figures/15_cross_modal_complementarity_and_synergy.png}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/15_cross_modal_complementarity_and_synergy.png}
     \caption{Cross-Modal Complementarity, Linear Centered Kernel Alignment (CKA) Matrix, and Synergistic Outlier Correction. (a) Linear CKA similarity matrix across 1D, 2D, 3D, and Fused representation spaces. (b) Single-view error correlation scatter plot. (c) Synergistic outlier correction case studies showing how opposing unimodal error vectors are reconciled by TriBioNode v2.}
     \label{fig:cross_modal_synergy}
 \end{figure*}
@@ -624,7 +626,7 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth]{../figures/view_fusion_dynamic_gating_synergy.png}
+    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/view_fusion_dynamic_gating_synergy.png}
     \caption{Multi-Modal Fusion, Dynamic Attention Gating Allocation, and Orthogonal Error Cancellation. (Left) Dynamic modality gating allocations $[w_1, w_2, w_3]$ showing adaptive attention distribution across molecular structural regimes: rigid aromatic systems (Anthanthrene PAH) upweight 1D and 2D topology ($w_1=12.1\%, w_2=3.5\%$), whereas flexible 3D spiro rings (Spiro-Hydantoin) route $99.7\%$ weight to 3D equivariant geometry. (Right) Orthogonal error cancellation on challenging outliers: unimodal View 1 and View 2 underpredict solubility, while View 3 overpredicts; the multi-modal fusion network neutralizes these opposing error vectors to recover true experimental solubility within $0.08\text{ log mol/L}$.}
     \label{fig:fusion_gating_synergy}
 \end{figure*}
@@ -651,7 +653,7 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.95\columnwidth]{../figures/10_parity_plot_with_epistemic_uncertainty.png}
+    \includegraphics[width=\columnwidth]{../figures/10_parity_plot_with_epistemic_uncertainty.png}
     \caption{Parity plots with epistemic uncertainty error bounds ($2\sigma$) for Delaney ESOL and FreeSolv test sets, demonstrating reliable error bounds on scaffold-shifted molecules.}
     \label{fig:parity_plot}
 \end{figure}
@@ -681,6 +683,7 @@ MMCL \cite{gao2026mmcl} & 48.6 M & 1.20 G & 3.2 min & 5.2 ms/mol \\
 
 As summarized in \textbf{Table \ref{tab:complexity}}, TriBioNode v2 maintains an efficient inference throughput of \textbf{6.4 ms per molecule} (>150 molecules per second on a single NVIDIA RTX 3090 GPU). Although incorporating 3D equivariant coordinate updates and tri-modal Transformer fusion, its computational overhead is modest (1.85 GFLOPs/mol, compared to 4.80 GFLOPs for DimeNet++). This enables high-throughput virtual screening of million-compound commercial and combinatorial chemical libraries within sub-hour execution budgets.
 
+\FloatBarrier
 % ==============================================================================
 % SECTION 6: DISCUSSION, LIMITATIONS & FUTURE PERSPECTIVES
 % ==============================================================================
