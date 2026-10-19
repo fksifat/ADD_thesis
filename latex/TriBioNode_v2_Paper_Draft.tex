@@ -72,37 +72,32 @@
 % ==============================================================================
 \section{Introduction}
 
-Quantitative Structure-Activity Relationship (QSAR) and Quantitative Structure-Property Relationship (QSPR) modeling represent foundational methodologies in computer-aided drug discovery (CADD) and molecular optimization \cite{agrafiotis2007advances, chen2018rise}. The conventional pharmaceutical pipeline is notoriously constrained by prohibitive economic capital and prolonged timelines: developing a single FDA-approved therapeutic entity routinely spans over 12--15 years and demands research investments exceeding \$2.6 billion \cite{dimasi2016innovation}. High clinical attrition rates, often exceeding 90\%, are predominantly driven by unanticipated toxicological liabilities, suboptimal pharmacokinetics (ADMET: Absorption, Distribution, Metabolism, Excretion, and Toxicity), or insufficient target binding efficacy identified late in clinical trials. High-fidelity in silico predictive models that screen chemical libraries prior to wet-lab synthesis enable early de-risking, prioritizing promising leads and weeding out liabilities \cite{yang2019analyzing, coley2019autonomous}.
+Quantitative Structure-Activity Relationship (QSAR) and Quantitative Structure-Property Relationship (QSPR) modeling represent foundational methodologies in computer-aided drug discovery (CADD), modern pharmacology, and lead optimization \cite{agrafiotis2007advances, chen2018rise}. The conventional pharmaceutical development pipeline is notoriously burdened by extreme financial capital expenditures and prolonged research timelines: bringing a single new molecular entity (NME) from early hit identification to FDA approval routinely exceeds 12 to 15 years and incurs capital investments surpassing \$2.6 billion \cite{dimasi2016innovation}. Most alarmingly, late-stage clinical attrition rates remain persistently above 90\%, overwhelmingly precipitated by unanticipated toxicological liabilities, unviable pharmacokinetics (Absorption, Distribution, Metabolism, Excretion, and Toxicity; ADMET), or inadequate target binding selectivity discovered late in human trials. High-throughput in silico virtual screening and differentiable property prediction serve as the frontline defense against attrition, enabling early de-risking by computational screening of multi-million compound libraries prior to costly chemical synthesis \cite{yang2019analyzing, coley2019autonomous}.
 
-In recent years, deep learning has revolutionized computational cheminformatics by transitioning from conventional handcrafted 2D/3D descriptors (e.g., Extended-Connectivity Fingerprints, physicochemical descriptor tables) to end-to-end differentiable representation learning \cite{gilmer2017neural, duvenaud2015convolutional}. Small molecules, however, are inherently multi-scale, multi-faceted chemical systems that manifest across multiple distinct, complementary representational modalities:
+Over the past decade, molecular representation learning has undergone a profound paradigm shift, transitioning from hand-engineered physicochemical descriptor tables and circular molecular fingerprints (e.g., Extended-Connectivity Fingerprints, ECFP) to deep end-to-end differentiable neural representations \cite{gilmer2017neural, duvenaud2015convolutional}. Small drug-like molecules, however, are fundamentally complex, multi-scale quantum chemical systems that exhibit distinct physical manifestations across three complementary representation modalities:
 \begin{enumerate}
-    \item \textbf{1D Language Sequences (SMILES)}: Simplified Molecular-Input Line-Entry System strings represent molecules as 1D linear alphanumeric sequences governed by formal valency grammars, capturing global syntactic semantics and token co-occurrence \cite{weininger1988smiles, honda2019smiles}.
-    \item \textbf{2D Topological Graphs}: Molecules naturally map to planar graphs where atoms serve as nodes and covalent bonds act as edges, preserving atomic connectivity, ring systems, and local electronic environments \cite{yang2019analyzing, hu2020strategies}.
-    \item \textbf{3D Spatial Conformations}: Molecules exist as flexible physical entities in 3D Euclidean space ($\mathbb{R}^3$), where bond lengths, angles, dihedral torsions, non-covalent contacts, and stereochemical chirality dictate spatial complementarity with biological macromolecular targets \cite{schutt2018schnet, klicpera2020fast}.
+    \item \textbf{1D Language Sequences (SMILES)}: Simplified Molecular-Input Line-Entry System (SMILES) strings depict molecules as linear alphanumeric sequences governed by formal valency and branching grammars \cite{weininger1988smiles}, capturing long-range syntactic patterns and token co-occurrences amenable to large-scale pre-trained language models \cite{honda2019smiles, chithrananda2020chemberta}.
+    \item \textbf{2D Topological Graphs}: Molecules are formally structured as planar chemical graphs where atoms serve as nodes and covalent bonds serve as edges \cite{yang2019analyzing, hu2020strategies}, preserving valence connectivity, ring topology, and localized electronic configurations.
+    \item \textbf{3D Spatial Conformations}: Molecules exist as flexible 3D physical entities in continuous Euclidean space ($\mathbb{R}^3$). Spatial coordinates, bond lengths, dihedral angles, non-covalent intramolecular contacts, and stereochemical chirality directly dictate steric accessibility and macromolecular target binding affinities \cite{schutt2018schnet, klicpera2020fast, satorras2021en}.
 \end{enumerate}
 
-Despite extensive efforts, comprehensive examination of recent foundational literature reveals four fundamental architectural bottlenecks that hinder existing deep learning frameworks:
+Despite substantial empirical advances, an exhaustive examination of contemporary cheminformatics literature reveals four fundamental methodological bottlenecks that constrain existing deep learning architectures:
 
-\subsection{Modality-Isolated and Dual-Modal Perceptual Blindness}
-Unimodal architectures inevitably suffer from intrinsic representation blind spots. Pure sequence-based models (e.g., SMILES Transformer \cite{honda2019smiles}, ChemBERTa \cite{chithrananda2020chemberta}) process 1D strings but cannot explicitly reason over 3D spatial conformation, non-covalent intramolecular steric clashes, or topological ring strain. Conversely, flat 2D graph neural networks (e.g., GCN \cite{kipf2017semi}, GAT \cite{velickovic2018graph}, GIN \cite{xu2019powerful}) aggregate information strictly along covalent bonds, ignoring continuous spatial distance and stereoisomerism. While recent 3D geometric networks (e.g., SchNet \cite{schutt2018schnet}, DimeNet++ \cite{gasteiger2020directional}, AEGNN-M \cite{cai2025aegnn}) incorporate spatial coordinates, they discard million-scale chemical language pre-training and remain fragile to errors in computational conformer generation. Emerging dual-view frameworks combine images and sequences (DV-IS \cite{zhang2024dual}) or sequences and 2D graphs (MMCL \cite{gao2026mmcl}), yet none simultaneously unite 1D linguistic grammar, 2D multi-scale topological graphs, and 3D Euclidean spatial geometry.
+\noindent\textbf{Modality-Isolated and Dual-Modal Perceptual Blindness.} Unimodal architectures inevitably inherit severe representational blind spots. 1D sequence models (e.g., SMILES Transformer \cite{honda2019smiles}, ChemBERTa \cite{chithrananda2020chemberta}) capture textual syntax but are fundamentally incapable of calculating continuous 3D Euclidean distances, intramolecular steric clashes, or non-covalent van der Waals contacts. Conversely, standard 2D graph neural networks (e.g., GCN \cite{kipf2017semi}, GAT \cite{velickovic2018graph}, GIN \cite{xu2019powerful}) propagate messages strictly along covalent edges, remaining blind to through-space spatial interactions and 3D stereoisomerism. Furthermore, while 3D spatial networks (e.g., SchNet \cite{schutt2018schnet}, DimeNet++ \cite{gasteiger2020directional}, AEGNN-M \cite{cai2025aegnn}) encode geometric distances, they discard rich chemical language pre-training on millions of compounds and remain acutely vulnerable to numerical artifacts in computationally generated conformers. Emerging dual-modal frameworks pair sequences with 2D images (DV-IS \cite{zhang2024dual}), sequences with 2D graphs (MMCL \cite{gao2026mmcl}), or 2D graphs with 3D geometry (AEGNN-M \cite{cai2025aegnn}). However, no existing architecture systematically harmonizes all three orthogonal axes: 1D linguistic grammar, 2D hierarchical topological graphs, and 3D equivariant Euclidean geometry.
 
-\subsection{Flat Graph Topology and Meso-Scale Motif Blindness}
-Standard atom-level Message Passing Neural Networks (MPNNs) aggregate node states strictly across 1-hop covalent bonds. As demonstrated in multichannel substructure analysis (MSGG \cite{wang2020molecular}) and hierarchical graph frameworks (PG-DERN \cite{zhang2025property}), flat message passing fails to model meso-scale functional groups (pharmacophoric motifs) and non-local positional isomerism (\textit{ortho}-, \textit{meta}-, and \textit{para}-substitutions on aromatic rings, conjugated $\pi$-bridges). Increasing network depth to capture long-range interactions inevitably triggers over-smoothing and the information bottleneck, blending distinct functional group features into indistinct averaged vectors.
+\noindent\textbf{Flat Graph Topology and Meso-Scale Substructure Blindness.} Prevailing Message Passing Neural Networks (MPNNs) rely on iterative 1-hop atom-level message passing. As demonstrated in recent studies on multichannel substructures (MSGG \cite{wang2020molecular}) and property-guided dual-level relations (PG-DERN \cite{zhang2025property}), flat graph aggregation cannot effectively capture meso-scale functional groups (pharmacophoric motifs) or non-local positional isomerism (such as \textit{ortho}-, \textit{meta}-, and \textit{para}-substitutions on aromatic rings, conjugated polyenes, and fused ring systems). Deepening flat GNNs to bridge distant atoms inevitably triggers over-smoothing and the Weisfeiler-Lehman expressiveness bottleneck, collapsing unique functional group signals into indistinct, averaged node embeddings.
 
-\subsection{Rigid Static Fusion without Dynamic Modality Adaptation}
-Current multi-modal architectures (e.g., MvMRL \cite{zhang2024mvmrl}, MMCL \cite{gao2026mmcl}) integrate modalities through simple concatenation or static attention weights. However, the physical relevance of molecular views varies fundamentally by property: quantum electronic properties (e.g., HOMO-LUMO gap, dipole moment) depend heavily on 3D spatial geometry, whereas aqueous solubility and metabolic clearance are primarily governed by 2D hydrogen bonding motifs and chemical substructures. Static fusion cannot dynamically adapt view reliance to sample-specific demands.
+\noindent\textbf{Rigid Static Fusion and Uniform Modality Reliance.} Existing multi-modal molecular models (e.g., MvMRL \cite{zhang2024mvmrl}, MMCL \cite{gao2026mmcl}) fuse representations via static vector concatenation or fixed attention layers. This uniform treatment fundamentally conflicts with the physical principles governing chemical properties: quantum electronic endpoints (e.g., HOMO-LUMO gap $\epsilon_{\text{gap}}$, dipole moments) depend almost exclusively on 3D spatial geometry and electron cloud distributions; conversely, thermodynamic aqueous solubility and membrane permeability are heavily influenced by 2D hydrogen bonding topologies, topological polar surface area (TPSA), and functional substructure motifs. A static fusion model cannot dynamically reweight modalities based on sample-specific chemical demands.
 
-\subsection{Absence of Calibrated Epistemic Uncertainty}
-Safety-critical drug discovery pipelines require not only accurate point predictions but also calibrated uncertainty estimates to prevent costly false positives during high-throughput virtual screening. Existing models output deterministic predictions without separating data noise (aleatoric uncertainty) from model unfamiliarity with out-of-distribution chemical scaffolds (epistemic uncertainty), leaving practitioners vulnerable to high-risk false positives when evaluating novel chemical space.
+\noindent\textbf{Absence of Calibrated Epistemic Uncertainty.} In high-throughput virtual screening, high-risk false positive predictions on structurally novel chemical matter waste enormous laboratory resources. Most molecular deep learning models output uncalibrated deterministic point predictions, unable to distinguish between aleatoric uncertainty (irreducible experimental assay noise) and epistemic uncertainty (the model's unfamiliarity with out-of-distribution chemical scaffolds). Without reliable confidence bounds, practitioners cannot discern whether a favorable prediction represents genuine bioactivity or out-of-domain hallucination.
 
-\subsection{Key Contributions of this Work}
-To systematically overcome these foundational challenges, we propose \textbf{TriBioNode v2}, a unified tri-modal hierarchical graph-spatial architecture. Our primary contributions are:
+\noindent\textbf{Key Contributions of this Work.} To resolve these interconnected challenges in an integrated manner, we introduce \textbf{TriBioNode v2}, an end-to-end tri-modal hierarchical graph-spatial framework. The principal contributions of this work are summarized as follows:
 \begin{itemize}
-    \item \textbf{Unified Tri-Modal Chemical Representation}: We construct an end-to-end multi-view framework integrating a 1D pre-trained ChemBERTa Transformer, a 2D Hierarchical Graph Encoder with 8-channel MSGG positional isomerism and BRICS Motif Transformers, and a 3D $E(3)$-Equivariant Graph Neural Network (EGNN) with continuous Gaussian RBF distance kernels.
-    \item \textbf{Multi-Modal Contrastive Alignment ($\mathcal{L}_{\text{CL}}$)}: We introduce a symmetric Tri-Modal InfoNCE contrastive pre-regularization loss that aligns the latent spaces of 1D, 2D, and 3D representations, preventing representational collapse and maximizing cross-view mutual information.
-    \item \textbf{Input-Dependent Dynamic Attention View Gating}: We formulate a parameter-efficient gating network $\bm{\alpha}(\mathbf{x}) \in \Delta^2$ that adaptively computes property-conditioned modality weights, coupled with a multi-head cross-modal Transformer fusion module.
-    \item \textbf{Calibrated Epistemic Uncertainty Quantification}: We embed a Deep Ensemble framework with variance-decomposed Gaussian Negative Log-Likelihood optimization, isolating epistemic variance to reliably flag out-of-distribution scaffolds during virtual screening.
-    \item \textbf{State-of-the-Art Empirical Performance}: Across 16 MoleculeNet and TDC benchmarks under rigorous Bemis-Murcko scaffold splitting, TriBioNode v2 consistently outperforms prior baselines and the six reference architectures, achieving superior accuracy, robust generalization, and well-calibrated uncertainty.
+    \item \textbf{Unified Tri-Modal Chemical Architecture}: We formulate an integrated multi-view framework uniting: (1) a 1D pre-trained ChemBERTa chemical language Transformer, (2) a 2D Hierarchical Graph Encoder with 8-channel MSGG positional isomerism and BRICS Motif Transformers, and (3) a 3D $E(3)$-Equivariant Graph Neural Network (EGNN) with continuous Gaussian Radial Basis Function (RBF) distance kernels.
+    \item \textbf{Symmetric Tri-Modal Contrastive Alignment ($\mathcal{L}_{\text{CL}}$)}: We formulate a multi-view InfoNCE contrastive pre-regularization loss that mutually aligns the latent spaces of 1D, 2D, and 3D encoders, preventing representational collapse and maximizing cross-modal mutual information.
+    \item \textbf{Input-Dependent Dynamic Attention View Gating}: We develop a parameter-efficient gating network $\bm{\alpha}(\mathbf{x}) \in \Delta^2$ that dynamically computes sample-conditioned modality weights, coupled with a multi-head Cross-Modal Transformer fusion module that facilitates orthogonal error cancellation.
+    \item \textbf{Calibrated Epistemic Uncertainty Quantification}: We incorporate a Deep Ensemble architecture optimized with heteroscedastic Gaussian Negative Log-Likelihood (NLL), isolating epistemic variance via the Law of Total Variance to provide robust safeguards against out-of-distribution scaffold errors.
+    \item \textbf{Extensive Empirical Validation}: Benchmarked across 16 MoleculeNet and TDC datasets under rigorous Bemis-Murcko scaffold splitting, TriBioNode v2 establishes state-of-the-art results (95.6\% BBBP, 90.4\% BACE, 97.4\% ClinTox, 0.542 ESOL RMSE, 0.741 FreeSolv RMSE), outperforming prior single-view, dual-view, and multi-view architectures.
 \end{itemize}
 
 % ==============================================================================
@@ -110,28 +105,19 @@ To systematically overcome these foundational challenges, we propose \textbf{Tri
 % ==============================================================================
 \section{Related Work \& Comparative Literature Review}
 
-Molecular representation learning has evolved through distinct methodological paradigms, progressing from 1D sequence models to 2D topological graphs, 3D spatial geometries, and emerging multi-modal frameworks.
+Molecular representation learning has progressed through several distinct methodological paradigms, transitioning from unimodal sequence and graph encoders to geometric networks and emerging multi-modal frameworks.
 
-\subsection{1D Chemical Language Modeling}
-Motivated by breakthroughs in natural language processing (NLP), 1D sequence models treat SMILES strings as chemical sentences. Early models adopted Recurrent Neural Networks (RNNs) and Bidirectional LSTMs to model token transitions \cite{honda2019smiles}. With the introduction of the Transformer architecture \cite{vaswani2017attention}, large-scale pre-training on unlabelled chemical corpora emerged. ChemBERTa \cite{chithrananda2020chemberta} pre-trained RoBERTa backbones on 77 million SMILES from PubChem via Masked Language Modeling (MLM), learning implicit chemical syntax, atom valency, and functional group co-occurrence. However, 1D language models represent molecules as flattened strings, lacking explicit inductive biases for topological ring closures and 3D stereochemical conformations.
+\subsection{Unimodal Molecular Encoders: Sequence, Graph, and Geometric Inductive Biases}
 
-\subsection{2D Graph Neural Networks \& Meso-Scale Substructures}
-Because molecules are naturally structured as planar graphs, Graph Neural Networks (GNNs) have become a dominant paradigm in property prediction. Early Graph Convolutional Networks (GCN) \cite{kipf2017semi} and Graph Attention Networks (GAT) \cite{velickovic2018graph} aggregate local neighborhood features. Directed Message Passing Neural Networks (D-MPNN) \cite{yang2019analyzing} mitigate message looping by passing information along directed covalent bonds.
+Molecular deep learning models are fundamentally characterized by their underlying inductive biases. Sequence-based models interpret SMILES strings as chemical sentences \cite{weininger1988smiles}. Early architectures utilized Recurrent Neural Networks (RNNs) and Bidirectional LSTMs to capture token transition probabilities \cite{honda2019smiles}. With the advent of the Transformer \cite{vaswani2017attention}, self-supervised pre-training on unlabelled chemical corpora became practical. ChemBERTa \cite{chithrananda2020chemberta} pre-trained RoBERTa backbones on 77 million SMILES from PubChem via Masked Language Modeling (MLM), enabling the network to learn chemical grammar, valency rules, and functional group co-occurrences. Nevertheless, 1D sequences flatten molecular structures into 1D linear strings, failing to encode physical 3D spatial conformation and topological ring strain directly.
 
-Standard atom-level GNNs, however, are fundamentally constrained by flat topology: they treat bonds as uniform 1-hop connections, failing to capture meso-scale functional groups (pharmacophores) and non-local positional isomerism. To address this, Wang et al. proposed the Multichannel Substructure Graph (MSGG) \cite{wang2020molecular}, constructing multi-channel adjacency tensors to explicitly represent \textit{ortho}-, \textit{meta}-, and \textit{para}-substitutions on aromatic rings. More recently, Zhang et al. introduced PG-DERN \cite{zhang2025property}, utilizing Breaking of Retrosynthetically Interesting Chemical Substructures (BRICS) \cite{degen2008art} to construct bipartite node-subgraph hierarchies. While hierarchical graphs enrich 2D topology, they remain blind to continuous 3D Euclidean distances and stereoisomerism.
+Graph Neural Networks (GNNs) represent molecules as planar 2D graphs $G=(V, E)$. Graph Convolutional Networks (GCN) \cite{kipf2017semi} and Graph Attention Networks (GAT) \cite{velickovic2018graph} aggregate features from 1-hop covalent neighbors. Directed Message Passing Neural Networks (D-MPNN) \cite{yang2019analyzing} mitigate message looping by passing information along directed covalent bonds. However, standard atom-level MPNNs are fundamentally upper-bounded by the 1-Weisfeiler-Lehman (1-WL) graph isomorphism test \cite{xu2019powerful}. They cannot distinguish non-local positional isomers (\textit{ortho}/ \textit{meta}/ \textit{para} substitutions on aromatic rings) without excessive network depth, which triggers over-smoothing and over-squashing \cite{wang2020molecular}. Furthermore, flat atom-level graphs lack explicit abstractions for meso-scale functional motifs (e.g., pharmacophores, retrosynthetic synthons) \cite{zhang2025property}.
 
-\subsection{3D Spatial Geometric \& Equivariant Networks}
-Physical molecular properties are ultimately governed by 3D spatial arrangements. SchNet \cite{schutt2018schnet} pioneered continuous-filter convolutions over interatomic distances $d_{ij} = \|\mathbf{r}_i - \mathbf{r}_j\|_2$. DimeNet++ \cite{gasteiger2020directional} extended this to directional message passing, embedding interatomic bond angles via 2D spherical Bessel Fourier representations. Satorras et al. introduced $E(n)$-Equivariant Graph Neural Networks (EGNN) \cite{satorras2021en}, which achieve exact rotational and translational equivariance in $\mathbb{R}^3$ without requiring computationally prohibitive spherical harmonics.
+To capture continuous spatial arrangements, 3D geometric networks operate on Cartesian atomic coordinates $\mathbf{R} \in \mathbb{R}^{N \times 3}$. SchNet \cite{schutt2018schnet} pioneered continuous-filter convolutions over interatomic Euclidean distances. DimeNet++ \cite{gasteiger2020directional} incorporated directional message passing using 2D spherical Bessel Fourier representations of bond angles. Satorras et al. introduced $E(n)$-Equivariant Graph Neural Networks (EGNN) \cite{satorras2021en}, which achieve exact rotational and translational equivariance in $\mathbb{R}^3$ through scalar-coordinate message passing without computationally expensive spherical harmonics. However, purely geometric models depend heavily on the accuracy of computationally generated conformers and omit large-scale chemical language pre-training.
 
-Recently, Cai et al. developed AEGNN-M \cite{cai2025aegnn}, coupling 2D topological graphs with an $E(3)$-equivariant network via spatial multi-head attention. Nevertheless, purely geometric 3D models suffer from high computational overhead and complete omission of 1D chemical language pre-training.
+\subsection{Multi-Modal Cheminformatics and Cross-View Representation Learning}
 
-\subsection{Multi-Modal Molecular Learning \& Fusion Paradigms}
-Recognizing the limitations of unimodal encoders, recent studies explore multi-modal learning. Zhang et al. introduced MvMRL \cite{zhang2024mvmrl}, combining a shallow TextCNN (1D SMILES), a multiscale GAT (2D graph), and Morgan fingerprints via sequential cross-attention. Zhang et al. proposed DV-IS (ISMol) \cite{zhang2024dual}, merging 2D rendered molecular images with SMILES strings using Vision Transformers (ViT) and cross-layer attention. Gao introduced MMCL \cite{gao2026mmcl}, formulating a multi-modal contrastive learning framework that pairs 1D SMILES with 2D molecular graphs via InfoNCE loss \cite{oord2018representation}.
-
-Despite their promise, existing multi-view frameworks remain limited: MvMRL lacks 3D spatial conformers and relies on shallow TextCNNs; DV-IS incurs pixel rendering noise and discards explicit bond graphs; MMCL omits 3D geometry; and all of them employ static, uniform fusion mechanisms that cannot adapt to property-specific physical demands.
-
-\subsection{Critical Synthesis of Foundational Literature}
-\textbf{Table \ref{tab:lit_comparison}} systematically benchmarks the six foundational reference papers alongside our proposed TriBioNode v2 framework. TriBioNode v2 is the first architecture to simultaneously unify 1D pre-trained language Transformers, 2D hierarchical 8-channel MSGG and BRICS motif graphs, and 3D $E(3)$-equivariant spatial EGNN conformers with dynamic attention gating and epistemic uncertainty quantification.
+To overcome the blind spots of unimodal representations, recent studies explore multi-modal and multi-view architectures. In \textbf{Table \ref{tab:lit_comparison}}, we provide a systematic comparative synthesis of the six foundational reference papers that directly informed the development of TriBioNode v2:
 
 \begin{table*}[t]
 \centering
@@ -155,6 +141,23 @@ Despite their promise, existing multi-view frameworks remain limited: MvMRL lack
 \end{tabular}}
 \end{table*}
 
+\begin{enumerate}
+    \item \textbf{MSGG} (Wang et al., 2020) \cite{wang2020molecular}: Formulates a multichannel substructure graph that captures non-local positional isomerism (\textit{ortho}/ \textit{meta}/ \textit{para}) through multi-channel adjacency tensors, yet lacks chemical language pre-training and 3D spatial conformation.
+    \item \textbf{DV-IS / ISMol} (Zhang et al., 2024) \cite{zhang2024dual}: Fuses 2D rendered molecular images with 1D SMILES sequences via Vision Transformers and cross-layer attention, but introduces pixel-rendering artifacts and omits explicit chemical bond topologies and 3D coordinates.
+    \item \textbf{MvMRL} (Zhang et al., 2024) \cite{zhang2024mvmrl}: Combines a shallow TextCNN (1D SMILES), a multiscale GAT (2D graph), and Morgan fingerprints via sequential cross-attention. However, it relies on a shallow linguistic encoder and completely ignores 3D spatial geometry.
+    \item \textbf{AEGNN-M} (Cai et al., 2025) \cite{cai2025aegnn}: Fuses 2D topological graphs with an $E(3)$-equivariant spatial network via spatial multi-head attention, but incurs high computational latency and discards large-scale chemical language pre-training.
+    \item \textbf{PG-DERN} (Zhang et al., 2025) \cite{zhang2025property}: Leverages BRICS retrosynthetic fragmentation to build hierarchical node-subgraph relation networks, yet remains restricted to 2D planar topology.
+    \item \textbf{MMCL} (Gao, 2026) \cite{gao2026mmcl}: Introduces a dual-modal contrastive learning objective (InfoNCE) pairing 1D SMILES and 2D molecular graphs, but relies on static concatenation and lacks 3D spatial conformer representations.
+\end{enumerate}
+
+TriBioNode v2 systematically resolves the shortcomings of these six architectures by uniting 1D pre-trained language, 2D multi-scale hierarchical graphs with 8-channel MSGG isomerism and BRICS motifs, and 3D $E(3)$-equivariant spatial conformers with dynamic attention gating.
+
+\subsection{Epistemic Uncertainty Quantification in Safety-Critical Screening}
+
+Predictive uncertainty in molecular machine learning comprises two distinct components \cite{kendall2017uncertainties}: aleatoric uncertainty, arising from stochastic experimental assay noise and biological variation; and epistemic uncertainty, reflecting model parameter uncertainty caused by sparse training data in unfamiliar regions of chemical space. In drug discovery, virtual screening libraries often contain chemical scaffolds structurally distinct from the training set (out-of-distribution, OOD). Standard deep networks tend to produce overconfident, erroneous predictions on OOD molecules.
+
+Approaches to uncertainty estimation include Monte Carlo Dropout \cite{kendall2017uncertainties}, Bayesian Neural Networks (BNNs), Evidential Deep Learning, and Deep Ensembles \cite{lakshminarayanan2017simple}. While Monte Carlo Dropout often underestimates uncertainty on shifted graphs, Deep Ensembles trained with heteroscedastic Gaussian Negative Log-Likelihood (NLL) provide empirical calibration and robustness to distribution shifts. In TriBioNode v2, we incorporate a variance-decomposed Deep Ensemble head, isolating epistemic variance to flag out-of-distribution chemical matter reliably.
+
 % ==============================================================================
 % SECTION 3: METHODOLOGY
 % ==============================================================================
@@ -167,10 +170,11 @@ Despite their promise, existing multi-view frameworks remain limited: MvMRL lack
     \label{fig:architecture}
 \end{figure*}
 
-The end-to-end architecture of \textbf{TriBioNode v2} is illustrated in \textbf{Figure \ref{fig:architecture}}. The framework comprises three modality-specific encoders (1D sequence, 2D hierarchical graph, 3D spatial conformer), a tri-modal contrastive alignment module, an input-dependent dynamic attention gating mechanism, a cross-modal Transformer fusion head, and a deep ensemble uncertainty estimation head.
+The complete architecture of \textbf{TriBioNode v2} is illustrated in \textbf{Figure \ref{fig:architecture}}. The framework systematically coordinates three modality-specific encoders, a tri-modal contrastive alignment module, an input-dependent dynamic attention gating network, a cross-modal Transformer fusion layer, and a deep ensemble epistemic uncertainty prediction head.
 
 \subsection{View 1: 1D Chemical Language Transformer Encoder}
-Given a molecular SMILES sequence $S = (t_1, t_2, \dots, t_L)$ of length $L$, tokens are extracted via Byte-Pair Encoding (BPE). The token sequence is embedded with positional encodings and processed through a 12-layer ChemBERTa Transformer backbone \cite{chithrananda2020chemberta}:
+
+Given a molecular SMILES sequence $S = (t_1, t_2, \dots, t_L)$ of token length $L$, chemical tokens are extracted via Byte-Pair Encoding (BPE). The sequence is combined with learned positional encodings and fed into a 12-layer pre-trained ChemBERTa Transformer backbone \cite{chithrananda2020chemberta}:
 \begin{equation}
 \mathbf{H}_{\text{seq}}^{(0)} = \left[\mathbf{e}_{\text{tok}}(t_i) + \mathbf{e}_{\text{pos}}(i)\right]_{i=1}^L \in \mathbb{R}^{L \times d_{\text{model}}}
 \label{eq:seq_emb}
@@ -179,22 +183,33 @@ Given a molecular SMILES sequence $S = (t_1, t_2, \dots, t_L)$ of length $L$, to
 \mathbf{H}_{\text{seq}}^{(l)} = \text{TransformerLayer}\left(\mathbf{H}_{\text{seq}}^{(l-1)}\right), \quad l \in \{1, \dots, 12\}
 \label{eq:seq_prop}
 \end{equation}
-
-Global sequence pooling is applied over token positions, followed by layer normalization and linear projection into the shared latent space $d_h = 256$:
+where $d_{\text{model}} = 768$. Global sequence pooling across token positions produces a pooled sequence representation:
 \begin{equation}
-\mathbf{h}_{\text{seq}} = \text{LayerNorm}\left(\mathbf{W}_{\text{seq}} \left(\frac{1}{L} \sum_{i=1}^L \mathbf{H}_{\text{seq}, i}^{(12)}\right) + \mathbf{b}_{\text{seq}}\right) \in \mathbb{R}^{d_h}
+\overline{\mathbf{H}}_{\text{seq}} = \frac{1}{L} \sum_{i=1}^L \mathbf{H}_{\text{seq}, i}^{(12)} \in \mathbb{R}^{d_{\text{model}}}
+\end{equation}
+which is projected into the shared latent space $d_h = 256$ via Layer Normalization and linear transformation:
+\begin{equation}
+\mathbf{h}_{\text{seq}} = \text{LayerNorm}\left(\mathbf{W}_{\text{seq}} \overline{\mathbf{H}}_{\text{seq}} + \mathbf{b}_{\text{seq}}\right) \in \mathbb{R}^{d_h}
 \label{eq:seq_pool}
 \end{equation}
+As illustrated in \textbf{Figure \ref{fig:view1_rep}}, self-attention saliency maps reveal that the language encoder concentrates attention on polar heteroatoms ($\text{-OH}$, $\text{-Cl}$, $\text{N}$) and branching ring closures.
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/view1_chemical_language_grammar.png}
+    \caption{Visual representation of View 1: 1D Chemical Language \& Grammar (ChemBERTa Transformer). For three structurally diverse benchmark molecules (Fenarimol analog, Spiro-Hydantoin complex, and Anthanthrene PAH), the tokenized SMILES sequence stream is displayed alongside normalized self-attention saliency distributions, highlighting how the chemical language model concentrates attention on polar heteroatoms ($\text{-OH}$, $\text{-Cl}$, $\text{N}$) and branching ring closures. The resulting 128-dimensional latent signal vector $\mathbf{h}_{v1} \in \mathbb{R}^{128}$ is visualized as an $8 \times 16$ attention-head matrix alongside unimodal prediction metrics.}
+    \label{fig:view1_rep}
+\end{figure*}
 
 \subsection{View 2: 2D Multi-Scale Hierarchical Graph \& Substructure Encoder}
-View 2 explicitly models molecular topology across two structural tiers: atom-level message passing with multichannel positional isomerism, and motif-level bipartite fragment attention.
 
-\subsubsection{Atom-Level Message Passing with 8-Channel MSGG Connectivity}
-Let $G = (V, E)$ represent the molecular graph with $N = |V|$ atoms and $|E|$ covalent bonds. Atom $i \in V$ is assigned a 71-dimensional physicochemical feature vector $\mathbf{x}_i \in \mathbb{R}^{71}$ (atomic number, hybridization state, aromaticity, formal charge, implicit valence, chiral tag). Bonds $(i, j) \in E$ are assigned 10-dimensional edge attributes $\mathbf{e}_{ij} \in \mathbb{R}^{10}$.
+View 2 explicitly models molecular topology across two structural tiers: atom-level message passing with multichannel positional isomerism, and motif-level bipartite fragment attention (\textbf{Figure \ref{fig:view2_rep}}).
 
-To capture non-local positional isomerism and ring conjugation \cite{wang2020molecular}, we construct an 8-channel Multichannel Substructure Tensor $\mathbf{A} \in \mathbb{R}^{N \times N \times 8}$, where each channel $c \in \{1, \dots, 8\}$ corresponds to: (1) \textit{Ortho}-ring, (2) \textit{Meta}-ring, (3) \textit{Para}-ring, (4) Fused ring junctions, (5) Spiro ring junctions, (6) Bridged ring systems, (7) Conjugated $\pi$-electron paths, and (8) Aliphatic covalent bonds.
+\noindent\textbf{Atom-Level Message Passing with 8-Channel MSGG Positional Isomerism.} Let $G = (V, E)$ denote the molecular graph with $N = |V|$ heavy atoms and $|E|$ covalent bonds. Each atom $i \in V$ is represented by a 71-dimensional physicochemical feature vector $\mathbf{x}_i \in \mathbb{R}^{71}$ (atomic number, hybridization state, aromaticity, formal charge, implicit valence, chiral tag). Covalent bonds $(i, j) \in E$ are assigned 10-dimensional edge attributes $\mathbf{e}_{ij} \in \mathbb{R}^{10}$.
 
-The atom-level update rule at layer $l$ is formulated as:
+To capture non-local positional isomerism and conjugated ring paths \cite{wang2020molecular}, we construct an 8-channel Multichannel Substructure Tensor $\mathbf{A} \in \mathbb{R}^{N \times N \times 8}$, where each channel $c \in \{1, \dots, 8\}$ corresponds to: (1) \textit{Ortho}-ring substitutions, (2) \textit{Meta}-ring substitutions, (3) \textit{Para}-ring substitutions, (4) Fused ring junctions, (5) Spiro ring junctions, (6) Bridged ring systems, (7) Conjugated $\pi$-electron paths, and (8) Aliphatic covalent bonds.
+
+The atom-level message aggregation at layer $l$ is formulated as:
 \begin{equation}
 \mathbf{m}_i^{(l)} = \sum_{c=1}^8 \sum_{j \in \mathcal{N}_c(i)} \mathbf{A}_{ij, c} \cdot \text{MLP}_c^{(l)}\left(\left[\mathbf{h}_i^{(l)} \parallel \mathbf{h}_j^{(l)} \parallel \mathbf{e}_{ij}\right]\right)
 \label{eq:msgg_msg}
@@ -203,11 +218,9 @@ The atom-level update rule at layer $l$ is formulated as:
 \mathbf{h}_i^{(l+1)} = \text{GRU}\left(\mathbf{h}_i^{(l)}, \mathbf{m}_i^{(l)}\right)
 \label{eq:msgg_update}
 \end{equation}
+where $\parallel$ denotes concatenation, and $\mathcal{N}_c(i)$ denotes the set of atoms connected to atom $i$ under channel $c$.
 
-\subsubsection{BRICS Motif-Level Bipartite Transformer}
-Molecules are fragmented into chemically meaningful functional groups $M = \{m_1, m_2, \dots, m_K\}$ using Breaking of Retrosynthetically Interesting Chemical Substructures (BRICS) rules \cite{degen2008art, zhang2025property}. An incidence matrix $\mathbf{B} \in \mathbb{R}^{N \times K}$ maps atoms to motifs ($B_{ik} = 1$ if atom $i \in m_k$).
-
-Initial motif representations are pooled from their constituent atoms and updated via Multi-Head Self-Attention:
+\noindent\textbf{BRICS Motif-Level Bipartite Fragment Transformer.} Molecules are fragmented into chemically meaningful functional groups $M = \{m_1, m_2, \dots, m_K\}$ using Breaking of Retrosynthetically Interesting Chemical Substructures (BRICS) rules \cite{degen2008art, zhang2025property}. A bipartite incidence matrix $\mathbf{B} \in \mathbb{R}^{N \times K}$ maps atoms to motifs ($B_{ik} = 1$ if atom $i \in m_k$). Initial motif representations are pooled from their constituent atoms and updated via Multi-Head Self-Attention (MHA):
 \begin{equation}
 \mathbf{u}_k^{(0)} = \frac{1}{\sum_{i=1}^N B_{ik}} \sum_{i=1}^N B_{ik} \mathbf{h}_i^{(L_{\text{atom}})}
 \label{eq:motif_init}
@@ -217,26 +230,35 @@ Initial motif representations are pooled from their constituent atoms and update
 \label{eq:motif_attn}
 \end{equation}
 
-\subsubsection{Fingerprint Projection and Unified 2D View Embedding}
-To incorporate global circular structural fragments, 1024-dimensional Morgan/ECFP4 fingerprints $\mathbf{x}_{\text{fp}} \in \{0, 1\}^{1024}$ \cite{rogers2010extended} are projected via an MLP ($\mathbf{h}_{\text{fp}} = \text{MLP}_{\text{fp}}(\mathbf{x}_{\text{fp}})$). The unified 2D graph representation is formed by combining atom pooling, motif pooling, and fingerprint projections:
+\noindent\textbf{Hierarchical Multi-Scale Graph Readout and Integration.} The unified 2D graph representation is constructed by hierarchically pooling atom-level and motif-level embeddings across the molecular graph:
 \begin{equation}
-\mathbf{h}_{\text{atom}} = \frac{1}{N}\sum_{i=1}^N \mathbf{h}_i^{(L)}, \quad \mathbf{h}_{\text{motif}} = \frac{1}{K}\sum_{k=1}^K \mathbf{u}_k^{(L_{\text{motif}})}
+\mathbf{h}_{\text{atom}} = \frac{1}{N}\sum_{i=1}^N \mathbf{h}_i^{(L_{\text{atom}})}, \quad \mathbf{h}_{\text{motif}} = \frac{1}{K}\sum_{k=1}^K \mathbf{u}_k^{(L_{\text{motif}})}
 \end{equation}
 \begin{equation}
-\mathbf{h}_{\text{graph}} = \text{LayerNorm}\left(\mathbf{W}_{\text{graph}} [\mathbf{h}_{\text{atom}} \parallel \mathbf{h}_{\text{motif}} \parallel \mathbf{h}_{\text{fp}}] + \mathbf{b}_{\text{graph}}\right) \in \mathbb{R}^{d_h}
+\mathbf{h}_{\text{graph}} = \text{LayerNorm}\left(\mathbf{W}_{\text{graph}} \mathbf{h}_{\text{hier}} + \mathbf{b}_{\text{graph}}\right) \in \mathbb{R}^{d_h}
 \label{eq:graph_pool}
 \end{equation}
+where $\mathbf{h}_{\text{hier}} = [\mathbf{h}_{\text{atom}} \parallel \mathbf{h}_{\text{motif}}] \in \mathbb{R}^{2d_h}$. This formulation ensures that View 2 captures topological connectivity across both micro-scale atoms and meso-scale functional motifs.
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/view2_hierarchical_graph_motifs.png}
+    \caption{Visual representation of View 2: 2D Hierarchical Atom-Motif Graph. Molecular graphs are segmented into color-coded BRICS functional motifs (e.g., 4-chlorophenyl, pyrimidine, tertiary carbinol core), contractable into high-level motif super-nodes. The 8-dimensional MSGG joint channels encode multi-scale interface features including bond orders, ring confinement, $\pi$-conjugation, hybridization pairs ($sp^2-sp^2$, $sp^2-sp^3$), and topological distances. The 128-dimensional pooled graph representation $\mathbf{h}_{v2}$ is displayed alongside unimodal evaluation metrics.}
+    \label{fig:view2_rep}
+\end{figure*}
 
 \subsection{View 3: 3D Spatial Conformer \texorpdfstring{$E(3)$}{E(3)}-Equivariant EGNN Encoder}
-For each molecule, 3D Cartesian coordinates $\mathbf{R} = [\mathbf{r}_1, \dots, \mathbf{r}_N]^T \in \mathbb{R}^{N \times 3}$ are initialized via Distance Geometry (ETKDGv3) and energy-minimized using the MMFF94 force field \cite{halgren1996merck}.
 
-To guarantee physical invariance to 3D rotations and translations, View 3 deploys an $E(3)$-Equivariant Graph Neural Network (EGNN) \cite{satorras2021en, cai2025aegnn}. Interatomic Euclidean distances $d_{ij} = \|\mathbf{r}_i - \mathbf{r}_j\|_2$ are expanded via continuous Gaussian Radial Basis Functions (RBF):
+For each molecule, 3D Cartesian coordinates $\mathbf{R} = [\mathbf{r}_1, \dots, \mathbf{r}_N]^T \in \mathbb{R}^{N \times 3}$ are initialized via Distance Geometry with Experimental-Torsion Knowledge (ETKDGv3) and energy-minimized using the Merck Molecular Force Field (MMFF94) \cite{halgren1996merck}.
+
+To preserve physical invariance to 3D rotations and translations, View 3 employs an $E(3)$-Equivariant Graph Neural Network (EGNN) \cite{satorras2021en, cai2025aegnn} (\textbf{Figure \ref{fig:view3_rep}}). Continuous interatomic Euclidean distances $d_{ij} = \|\mathbf{r}_i - \mathbf{r}_j\|_2$ are expanded via continuous Gaussian Radial Basis Functions (RBF):
 \begin{equation}
 \mathbf{e}_{ij}^{\text{RBF}} = \left[\exp\left(-\gamma (d_{ij} - \mu_k)^2\right)\right]_{k=1}^{K_{\text{RBF}}}, \quad \mu_k \in [0, 10]\text{ \AA}
 \label{eq:rbf_kernel}
 \end{equation}
+where $K_{\text{RBF}} = 32$ Gaussian centers spaced uniformly between 0 and 10 \AA.
 
-The $l$-th equivariant layer updates both node scalar states $\mathbf{s}_i$ and coordinate vectors $\mathbf{r}_i$:
+The $l$-th equivariant layer iteratively updates both node scalar states $\mathbf{s}_i$ and coordinate vectors $\mathbf{r}_i$:
 \begin{equation}
 \mathbf{m}_{ij}^{(l)} = \phi_m\left(\mathbf{s}_i^{(l)}, \mathbf{s}_j^{(l)}, \mathbf{e}_{ij}^{\text{RBF}}, \mathbf{e}_{ij}^{\text{bond}}\right)
 \end{equation}
@@ -246,11 +268,19 @@ The $l$-th equivariant layer updates both node scalar states $\mathbf{s}_i$ and 
 \begin{equation}
 \mathbf{s}_i^{(l+1)} = \mathbf{s}_i^{(l)} + \phi_s\left(\mathbf{s}_i^{(l)}, \sum_{j \neq i} \mathbf{m}_{ij}^{(l)}\right)
 \end{equation}
-where $\phi_m, \phi_r, \phi_s$ are multi-layer perceptrons. The coordinate-invariant 3D conformer embedding is pooled via:
+where $\phi_m, \phi_r, \phi_s$ denote multi-layer perceptrons. Defining the mean pooled scalar state as $\overline{\mathbf{s}} = \frac{1}{N} \sum_{i=1}^N \mathbf{s}_i^{(L_{\text{3D}})} \in \mathbb{R}^{d_s}$, the coordinate-invariant 3D conformer embedding is obtained via:
 \begin{equation}
-\mathbf{h}_{\text{conf}} = \text{LayerNorm}\left(\mathbf{W}_{\text{conf}} \left(\frac{1}{N} \sum_{i=1}^N \mathbf{s}_i^{(L_{\text{3D}})}\right) + \mathbf{b}_{\text{conf}}\right) \in \mathbb{R}^{d_h}
+\mathbf{h}_{\text{conf}} = \text{LayerNorm}\left(\mathbf{W}_{\text{conf}} \overline{\mathbf{s}} + \mathbf{b}_{\text{conf}}\right) \in \mathbb{R}^{d_h}
 \label{eq:conf_pool}
 \end{equation}
+As shown in the Multi-View Complementarity Matrix (\textbf{Figure \ref{fig:complementarity}}), View 3 exhibits low feature cross-correlation with Views 1 and 2, confirming that spatial conformations supply non-redundant predictive signals.
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/view3_3d_spatial_equivariant_conformer.png}
+    \caption{Visual representation of View 3: 3D Spatial Equivariant Conformer ($E(3)$-EGNN). (Left) 3D ball-and-stick spatial conformer geometries optimized via ETKDGv3 and MMFF94 force field. (Center) All-to-all pairwise interatomic Euclidean distance field $D_{ij} = \|\mathbf{x}_i - \mathbf{x}_j\|_2$ (expanded via Gaussian RBF kernels $\mu_k \in [0, 10]\text{ \AA}$) providing complete spatial coordinate metrics ($R_g$, 3D span) with a dedicated distance scale. (Right) The coordinate-invariant 128-dimensional pooled conformer representation vector $\mathbf{h}_{v3} \in \mathbb{R}^{128}$ displayed alongside unimodal evaluation metrics.}
+    \label{fig:view3_rep}
+\end{figure*}
 
 \begin{figure}[!htbp]
     \centering
@@ -260,7 +290,8 @@ where $\phi_m, \phi_r, \phi_s$ are multi-layer perceptrons. The coordinate-invar
 \end{figure}
 
 \subsection{Multi-Modal Tri-View Contrastive Alignment \texorpdfstring{($\mathcal{L}_{\text{CL}}$)}{(L\_CL)}}
-To align the latent spaces of the three encoders prior to downstream fusion, we formulate a symmetric Tri-Modal InfoNCE contrastive regularization loss \cite{oord2018representation, gao2026mmcl}. For a minibatch of $B$ molecules with $\ell_2$-normalized representations $\overline{\mathbf{h}} = \mathbf{h} / \|\mathbf{h}\|_2$, pairwise cross-view alignment is enforced across all view pairs $(u, v) \in \{(\text{seq}, \text{graph}), (\text{seq}, \text{conf}), (\text{graph}, \text{conf})\}$:
+
+To align the latent spaces of the three modality encoders prior to downstream fusion, we formulate a symmetric Tri-Modal InfoNCE contrastive regularization loss \cite{oord2018representation, gao2026mmcl}. For a minibatch of $B$ molecules with $\ell_2$-normalized representations $\overline{\mathbf{h}} = \mathbf{h} / \|\mathbf{h}\|_2$, pairwise cross-view alignment is enforced across all three view pairs $(u, v) \in \{(\text{seq}, \text{graph}), (\text{seq}, \text{conf}), (\text{graph}, \text{conf})\}$:
 \begin{equation}
 \ell(u, v) = -\frac{1}{B} \sum_{i=1}^B \log \frac{\exp\left(\overline{\mathbf{h}}_u^{(i)} \cdot \overline{\mathbf{h}}_v^{(i)} / \tau\right)}{\sum_{j=1}^B \exp\left(\overline{\mathbf{h}}_u^{(i)} \cdot \overline{\mathbf{h}}_v^{(j)} / \tau\right)}
 \end{equation}
@@ -268,10 +299,11 @@ To align the latent spaces of the three encoders prior to downstream fusion, we 
 \mathcal{L}_{\text{CL}} = \frac{1}{6} \sum_{u \neq v} \left(\ell(u, v) + \ell(v, u)\right)
 \label{eq:contrastive_loss}
 \end{equation}
-where $\tau = 0.07$ is the temperature hyperparameter.
+where $\tau = 0.07$ is the temperature hyperparameter. This symmetric formulation maximizes mutual information between modalities while penalizing representational collapse.
 
 \subsection{Dynamic Attention View Gating \& Cross-Modal Transformer Fusion}
-Rather than enforcing static or uniform modality concatenation, TriBioNode v2 dynamically computes sample-specific attention weights conditioned on the molecular input:
+
+Rather than enforcing static vector concatenation, TriBioNode v2 dynamically computes input-dependent modality weights conditioned on the molecular structure:
 \begin{equation}
 \mathbf{g} = \mathbf{W}_{g, 2} \text{ReLU}\left(\mathbf{W}_{g, 1} [\mathbf{h}_{\text{seq}} \parallel \mathbf{h}_{\text{graph}} \parallel \mathbf{h}_{\text{conf}}] + \mathbf{b}_{g, 1}\right) + \mathbf{b}_{g, 2}
 \end{equation}
@@ -280,7 +312,7 @@ Rather than enforcing static or uniform modality concatenation, TriBioNode v2 dy
 \label{eq:gating_weights}
 \end{equation}
 
-The dynamically weighted view tokens $\mathbf{T} = [\alpha_{\text{seq}}\mathbf{h}_{\text{seq}}, \alpha_{\text{graph}}\mathbf{h}_{\text{graph}}, \alpha_{\text{conf}}\mathbf{h}_{\text{conf}}]^T \in \mathbb{R}^{3 \times d_h}$ are passed through a 2-layer Cross-Modal Multi-Head Transformer to capture inter-modal dependencies:
+The dynamically weighted view tokens $\mathbf{T} = [\alpha_{\text{seq}}\mathbf{h}_{\text{seq}}, \alpha_{\text{graph}}\mathbf{h}_{\text{graph}}, \alpha_{\text{conf}}\mathbf{h}_{\text{conf}}]^T \in \mathbb{R}^{3 \times d_h}$ are processed through a 2-layer Cross-Modal Multi-Head Transformer to model high-order inter-modal dependencies:
 \begin{equation}
 \mathbf{Z} = \text{MultiHeadAttention}(\mathbf{Q}=\mathbf{T}, \mathbf{K}=\mathbf{T}, \mathbf{V}=\mathbf{T})
 \end{equation}
@@ -288,17 +320,19 @@ The dynamically weighted view tokens $\mathbf{T} = [\alpha_{\text{seq}}\mathbf{h
 \mathbf{h}_{\text{fused}} = \text{LayerNorm}\left(\mathbf{W}_f \cdot \text{vec}(\mathbf{Z}) + \mathbf{b}_f\right) \in \mathbb{R}^{d_h}
 \label{eq:fused_rep}
 \end{equation}
+where $\text{vec}(\mathbf{Z}) \in \mathbb{R}^{3d_h}$, and $\mathbf{W}_f \in \mathbb{R}^{d_h \times 3d_h}$.
 
 \subsection{Deep Ensemble Epistemic Uncertainty Quantification}
-To ensure safety-critical reliability during virtual screening, TriBioNode v2 employs an ensemble of $E = 5$ independently initialized models $\{\mathcal{M}_e\}_{e=1}^E$ \cite{lakshminarayanan2017simple, kendall2017uncertainties}.
 
-For regression endpoints, each model outputs a predictive mean $\widehat{\mu}_e(\mathbf{x})$ and heteroscedastic variance $\widehat{\sigma}_e^2(\mathbf{x})$ optimized via Gaussian Negative Log-Likelihood:
+To ensure safety-critical reliability during virtual screening campaigns, TriBioNode v2 employs an ensemble of $E = 5$ independently initialized models $\{\mathcal{M}_e\}_{e=1}^E$ \cite{lakshminarayanan2017simple, kendall2017uncertainties}.
+
+For regression tasks, each model outputs a predictive mean $\widehat{\mu}_e(\mathbf{x})$ and heteroscedastic variance $\widehat{\sigma}_e^2(\mathbf{x})$ optimized via Gaussian Negative Log-Likelihood:
 \begin{equation}
 \mathcal{L}_{\text{NLL}}^{(e)} = \frac{1}{2B} \sum_{i=1}^B \left(\frac{(y_i - \widehat{\mu}_e(\mathbf{x}_i))^2}{\widehat{\sigma}_e^2(\mathbf{x}_i)} + \log \widehat{\sigma}_e^2(\mathbf{x}_i)\right)
 \label{eq:nll_loss}
 \end{equation}
 
-The overall prediction $\overline{\mu}(\mathbf{x})$ and decoupled epistemic uncertainty $U_{\text{epistemic}}(\mathbf{x})$ are obtained via the Law of Total Variance:
+The ensemble mean prediction $\overline{\mu}(\mathbf{x})$ and decoupled epistemic uncertainty $U_{\text{epistemic}}(\mathbf{x})$ are derived via the Law of Total Variance:
 \begin{equation}
 \overline{\mu}(\mathbf{x}) = \frac{1}{E} \sum_{e=1}^E \widehat{\mu}_e(\mathbf{x})
 \end{equation}
@@ -321,8 +355,9 @@ The composite training loss for each ensemble member is regularized by the contr
 % ==============================================================================
 \section{Experimental Setup \& Benchmark Protocol}
 
-\subsection{Benchmark Datasets Portfolio}
-TriBioNode v2 was evaluated across 16 benchmark datasets spanning MoleculeNet \cite{wu2018moleculenet} and Therapeutics Data Commons (TDC) \cite{huang2021therapeutics}, encompassing biophysical classification, physicochemical regression, ADMET pharmacokinetics, and quantum chemistry:
+\subsection{Benchmark Portfolio and Out-of-Distribution Scaffold Splitting}
+
+To comprehensively evaluate TriBioNode v2 across chemical domains, we assembled a benchmark portfolio of 16 datasets spanning MoleculeNet \cite{wu2018moleculenet} and Therapeutics Data Commons (TDC) \cite{huang2021therapeutics} (\textbf{Figure \ref{fig:benchmarks_overview}(a)}):
 \begin{itemize}
     \item \textbf{Biophysical \& Toxicity Classification}: BBBP (Blood-Brain Barrier Penetration, 2,050 molecules), BACE ($\beta$-secretase 1 inhibition, 1,513 molecules), ClinTox (FDA approval status and clinical trial toxicity failures, 1,484 molecules), Tox21 (12 toxicity pathway phenotypes, 7,831 molecules), SIDER (27 adverse drug reaction categories across 1,427 marketed drugs), and HIV (viral replication inhibition screen, 41,127 molecules).
     \item \textbf{Physical Chemistry \& Quantum Regression}: Delaney ESOL (aqueous solubility, 1,128 molecules), FreeSolv (experimental hydration free energy, 642 molecules), Lipophilicity ($\log D_{7.4}$ distribution coefficients, 4,200 molecules), QM8 (electronic spectra excitation energies, 21,786 molecules), and QM9 ($\epsilon_{\text{gap}}$ HOMO-LUMO energy, 133,885 molecules).
@@ -348,23 +383,22 @@ TriBioNode v2 was evaluated across 16 benchmark datasets spanning MoleculeNet \c
     \label{fig:benchmarks_overview}
 \end{figure*}
 
-\subsection{Scaffold Splitting \& Out-of-Distribution Protocol}
-To enforce genuine out-of-distribution (OOD) chemical generalization, all datasets were partitioned using strict \textbf{Bemis-Murcko Scaffold Splitting} \cite{bemis1996properties} with an 80:10:10 train/validation/test ratio. Molecules are clustered by their core 2D ring architectures and linkers, ensuring that test molecules possess scaffolds completely unseen during training. As shown in \textbf{Figure \ref{fig:scaffold_diversity}}, scaffold diversity spans from 40.5\% (BACE) to over 82.2\% (ClinTox), creating a challenging test bed for generalizability.
+To enforce rigorous out-of-distribution (OOD) chemical generalization, all datasets were partitioned using strict \textbf{Bemis-Murcko Scaffold Splitting} \cite{bemis1996properties} with an 80:10:10 train/validation/test ratio. Molecules are clustered by their core 2D ring architectures and linkers, guaranteeing that test molecules possess molecular scaffolds completely unseen during model training. As shown in \textbf{Figure \ref{fig:scaffold_diversity}}, scaffold diversity ranges from 40.5\% (BACE) to over 82.2\% (ClinTox), reflecting substantial structural shifts representative of real-world drug screening.
 
-\subsection{Evaluation Metrics \& Baseline Architectures}
-Classification performance is evaluated using the Area Under the Receiver Operating Characteristic Curve (\textbf{ROC-AUC \%} $\uparrow$). Regression tasks are assessed using Root Mean Squared Error (\textbf{RMSE} $\downarrow$) and Mean Absolute Error (\textbf{MAE} $\downarrow$). All experiments report mean and standard deviation across 5 distinct random seed initializations under scaffold splitting.
+\subsection{Baseline Models, Evaluation Metrics, and Implementation Details}
 
-Baselines span multiple model families:
+We benchmark TriBioNode v2 against an extensive collection of baseline architectures across five categories:
 \begin{enumerate}
-    \item \textbf{Traditional ML}: Random Forest on ECFP4 fingerprints and XGBoost on RDKit physicochemical descriptors.
+    \item \textbf{Traditional ML}: Random Forest on 1024-bit ECFP4 fingerprints and XGBoost on 200 RDKit physicochemical descriptors.
     \item \textbf{1D Language Models}: SMILES Transformer \cite{honda2019smiles} and ChemBERTa-2 \cite{chithrananda2020chemberta}.
     \item \textbf{2D Graph Models}: D-MPNN \cite{yang2019analyzing} and GIN with ContextPred self-supervised pre-training \cite{hu2020strategies}.
     \item \textbf{3D Geometric Networks}: SchNet \cite{schutt2018schnet} and DimeNet++ \cite{gasteiger2020directional}.
-    \item \textbf{The 6 Foundational Study Models}: MSGG \cite{wang2020molecular}, DV-IS \cite{zhang2024dual}, MvMRL \cite{zhang2024mvmrl}, AEGNN-M \cite{cai2025aegnn}, PG-DERN \cite{zhang2025property}, and MMCL \cite{gao2026mmcl}.
+    \item \textbf{The Six Foundational Study Models}: MSGG \cite{wang2020molecular}, DV-IS \cite{zhang2024dual}, MvMRL \cite{zhang2024mvmrl}, AEGNN-M \cite{cai2025aegnn}, PG-DERN \cite{zhang2025property}, and MMCL \cite{gao2026mmcl}.
 \end{enumerate}
 
-\subsection{Optimization \& Hardware Setup}
-Models were optimized using AdamW ($\beta_1 = 0.9, \beta_2 = 0.999$, weight decay $= 10^{-5}$) with a Cosine Annealing learning rate schedule initialized at $\eta_0 = 10^{-4}$ following a 5-epoch linear warmup. Gradient clipping ($\|\mathbf{g}\|_2 \le 1.0$) was enforced for training stability. Early stopping with a patience of 20 epochs based on validation performance was employed. All experiments were conducted on an NVIDIA RTX 3090 GPU (24GB VRAM) and AMD Ryzen 9 processor running PyTorch 2.2 and RDKit 2023.09.
+Classification performance is evaluated using the Area Under the Receiver Operating Characteristic Curve (\textbf{ROC-AUC \%} $\uparrow$). Regression tasks are assessed using Root Mean Squared Error (\textbf{RMSE} $\downarrow$), Mean Absolute Error (\textbf{MAE} $\downarrow$), and Pearson correlation ($R^2$ $\uparrow$). Uncertainty calibration is quantified using Pearson correlation $r$ between uncertainty and absolute error, Prediction Interval Coverage Probability (PICP at 95\% confidence), and Mean Prediction Interval Width (MPIW). All reported results represent the mean and standard deviation across five independent random seed initializations under scaffold splitting.
+
+Models were optimized using AdamW ($\beta_1 = 0.9, \beta_2 = 0.999$, weight decay $= 10^{-5}$) with a Cosine Annealing learning rate schedule initialized at $\eta_0 = 10^{-4}$ following a 5-epoch linear warmup. Gradient clipping ($\|\mathbf{g}\|_2 \le 1.0$) was enforced for training stability. Early stopping with a patience of 20 epochs based on validation performance was employed. All experiments were conducted on an NVIDIA RTX 3090 GPU (24GB VRAM) and AMD Ryzen 9 processor running PyTorch 2.2, PyG, and RDKit 2023.09.
 
 % ==============================================================================
 % SECTION 5: RESULTS & COMPREHENSIVE DISCUSSION
@@ -447,12 +481,13 @@ MMCL \cite{gao2026mmcl} & 86.8 $\pm$ 0.4 & 88.5 $\pm$ 0.3 & 86.1 $\pm$ 0.4 & 0.8
 \end{tabular}}
 \end{table*}
 
-\subsection{Benchmark Performance Analysis}
-As documented in \textbf{Table \ref{tab:classification}}, TriBioNode v2 establishes new state-of-the-art results across all MoleculeNet classification benchmarks under strict scaffold splitting. Specifically, TriBioNode v2 achieves \textbf{95.6\%} ROC-AUC on BBBP (+1.4\% over MMCL), \textbf{90.4\%} on BACE (+1.5\% over MMCL), \textbf{97.4\%} on ClinTox (+1.3\% over MMCL), and \textbf{85.2\%} on Tox21. Compared to traditional ML (72.3\% average ROC-AUC) and single-modality D-MPNN (82.0\%), TriBioNode v2 attains an overall average ROC-AUC of \textbf{86.4\%}, representing a substantial leap in predictive accuracy.
+\subsection{Benchmark Performance \& Comparative Evaluation}
 
-On physical chemistry and quantum regression benchmarks (\textbf{Table \ref{tab:regression}}), TriBioNode v2 reduces Delaney ESOL RMSE to \textbf{0.542} (vs. 0.578 for MMCL and 0.612 for AEGNN-M) and FreeSolv RMSE to \textbf{0.741} (vs. 0.812 for MMCL and 0.984 for AEGNN-M). On quantum mechanical endpoints (QM8 and QM9 $\epsilon_{\text{gap}}$), View 3's continuous Euclidean EGNN architecture achieves the lowest overall error (0.0098 and 0.0274), ranking 1.0 across all regression tasks.
+As documented in \textbf{Table \ref{tab:classification}}, TriBioNode v2 achieves state-of-the-art predictive performance across all MoleculeNet classification benchmarks under rigorous Bemis-Murcko scaffold splitting. Specifically, TriBioNode v2 achieves \textbf{95.6\%} ROC-AUC on BBBP (+1.4\% over MMCL), \textbf{90.4\%} on BACE (+1.5\% over MMCL), \textbf{97.4\%} on ClinTox (+1.3\% over MMCL), \textbf{85.2\%} on Tox21, \textbf{68.1\%} on SIDER, and \textbf{81.7\%} on HIV. Compared to classical machine learning (72.3\% average ROC-AUC) and single-modality D-MPNN (82.0\%), TriBioNode v2 achieves an overall average ROC-AUC of \textbf{86.4\%}, representing a substantial step forward in out-of-distribution generalizability.
 
-On extended TDC ADMET pharmacokinetic benchmarks (\textbf{Table \ref{tab:tdc_admet}}), TriBioNode v2 achieves \textbf{88.9\%} ROC-AUC on Ames Mutagenicity and \textbf{90.8\%} on CYP3A4 Veith, validating strong cross-domain generalizability across clinical and physiological properties.
+On physical chemistry and quantum regression benchmarks (\textbf{Table \ref{tab:regression}}), TriBioNode v2 consistently ranks first across all endpoints. It reduces Delaney ESOL RMSE to \textbf{0.542} (vs. 0.578 for MMCL and 0.612 for AEGNN-M) and FreeSolv hydration free energy RMSE to \textbf{0.741} (vs. 0.812 for MMCL and 0.984 for AEGNN-M). On quantum mechanical endpoints (QM8 electronic transitions and QM9 $\epsilon_{\text{gap}}$), View 3's continuous Euclidean EGNN architecture achieves the lowest overall error (0.0098 and 0.0274), ranking 1.0 across all regression tasks.
+
+On extended TDC ADMET pharmacokinetic benchmarks (\textbf{Table \ref{tab:tdc_admet}}), TriBioNode v2 achieves \textbf{88.9\%} ROC-AUC on Ames Mutagenicity, \textbf{90.8\%} on CYP3A4 Veith, and \textbf{88.4\%} on hERG cardiotoxicity, verifying that the tri-modal integration generalizes across complex biological and physiological mechanisms.
 
 \begin{figure*}[!t]
     \centering
@@ -461,10 +496,9 @@ On extended TDC ADMET pharmacokinetic benchmarks (\textbf{Table \ref{tab:tdc_adm
     \label{fig:multiview_perf}
 \end{figure*}
 
-\subsection{Multi-View Comparative Performance \& Error Density}
-To investigate how multi-modal fusion improves predictive fidelity over isolated single views, we conducted detailed empirical comparisons on the Delaney ESOL scaffold test set (\textbf{Figure \ref{fig:multiview_perf}}). As summarized in \textbf{Figure \ref{fig:multiview_perf}(a)}, single-view models exhibit substantial errors: View 1 (SMILES Transformer) yields an RMSE of 1.562 ($R^2 = 0.392$); View 2 (2D Hierarchical Graph) achieves 1.754 ($R^2 = 0.234$); and View 3 (3D EGNN) achieves 1.302 ($R^2 = 0.578$). The unified TriBioNode v2 model reduces RMSE to \textbf{1.244} ($R^2 = 0.614$), which further improves to \textbf{0.915 MAE} and \textbf{0.645 $R^2$} under Deep Ensemble epistemic averaging.
+\noindent\textbf{Error Density and Latent Manifold Topology.} To examine the underlying mechanisms driving these performance gains, we analyzed error distributions and latent manifolds on the Delaney ESOL scaffold test set (\textbf{Figure \ref{fig:multiview_perf}} and \textbf{Figure \ref{fig:latent_tsne}}). As shown in \textbf{Figure \ref{fig:multiview_perf}(a)}, single-view models exhibit substantial errors: View 1 (SMILES Transformer) yields an RMSE of 1.562 ($R^2 = 0.392$); View 2 (2D Hierarchical Graph) achieves 1.754 ($R^2 = 0.234$); and View 3 (3D EGNN) achieves 1.302 ($R^2 = 0.578$). TriBioNode v2 reduces RMSE to \textbf{1.244} ($R^2 = 0.614$), which further improves to \textbf{0.915 MAE} and \textbf{0.645 $R^2$} under Deep Ensemble averaging.
 
-The error density distribution in \textbf{Figure \ref{fig:multiview_perf}(b)} reveals that unimodal models suffer from fat error tails, whereas TriBioNode v2 concentrates over 65\% of predictions below 0.8 log mol/L error. Furthermore, the Regression Error Characteristic (REC) curve (\textbf{Figure \ref{fig:multiview_perf}(c)}) demonstrates that at an error tolerance of $\epsilon = 1.0$ log mol/L, TriBioNode v2 successfully captures \textbf{64.6\%} of all test molecules, compared to only 51.3\% for View 1 and 47.8\% for View 2. Finally, residual analysis (\textbf{Figure \ref{fig:multiview_perf}(d)}) shows that single views suffer from severe systematic bias on poorly soluble compounds ($y < -6.0$), whereas TriBioNode v2 maintains balanced calibration across both hydrophilic and hydrophobic regimes.
+The error density distribution (\textbf{Figure \ref{fig:multiview_perf}(b)}) demonstrates that unimodal models suffer from fat error tails, whereas TriBioNode v2 concentrates over 65\% of predictions below 0.8 log mol/L error. The Regression Error Characteristic (REC) curve (\textbf{Figure \ref{fig:multiview_perf}(c)}) confirms that at an error tolerance of $\epsilon = 1.0$ log mol/L, TriBioNode v2 captures \textbf{64.6\%} of all test molecules, compared to 51.3\% for View 1 and 47.8\% for View 2. Residual analysis (\textbf{Figure \ref{fig:multiview_perf}(d)}) shows that single views suffer from systematic bias on hydrophobic compounds ($y < -6.0$), whereas TriBioNode v2 maintains balanced calibration across both hydrophilic and hydrophobic regimes.
 
 \begin{figure*}[!t]
     \centering
@@ -473,14 +507,9 @@ The error density distribution in \textbf{Figure \ref{fig:multiview_perf}(b)} re
     \label{fig:latent_tsne}
 \end{figure*}
 
-\subsection{Latent Manifold Topology \& Disentanglement}
-To understand the geometric organization learned by each encoder, we performed t-SNE dimensionality reduction on the latent vectors ($\mathbf{h}_{\text{seq}}, \mathbf{h}_{\text{graph}}, \mathbf{h}_{\text{conf}}$) and the fused embedding ($\mathbf{h}_{\text{fused}}$), colored by the experimental target (\textbf{Figure \ref{fig:latent_tsne}}):
-\begin{itemize}
-    \item \textbf{View 1 (1D SMILES)}: Forms fragmented local clusters dictated by alphanumeric sequence motifs, exhibiting moderate global correlation with solubility ($|\rho| = 0.28$).
-    \item \textbf{View 2 (2D Graph)}: Groups molecules by topological scaffold families and ring connectivity ($|\rho| = 0.38$).
-    \item \textbf{View 3 (3D EGNN)}: Preserves continuous spatial geometric volume and surface area ($|\rho| = 0.44$).
-    \item \textbf{TriBioNode v2 (Fused)}: Generates a remarkably smooth, continuous target gradient manifold. Highly soluble compounds (bright yellow, $y > -2$) and hydrophobic molecules (dark purple, $y < -6$) separate along a monotonic latent continuum ($|\rho| = 0.72$), demonstrating that dynamic cross-modal attention successfully harmonizes heterogeneous representational spaces into a unified manifold.
-\end{itemize}
+t-SNE dimensionality reduction of latent spaces (\textbf{Figure \ref{fig:latent_tsne}}) reveals distinct geometric organizations: View 1 forms fragmented clusters governed by alphanumeric syntax ($|\rho| = 0.28$ with logS); View 2 clusters molecules by scaffold families ($|\rho| = 0.38$); and View 3 organizes molecules by spatial volume ($|\rho| = 0.44$). The fused TriBioNode v2 representation synthesizes these into a smooth, continuous target gradient manifold ($|\rho| = 0.72$), demonstrating that dynamic attention gating harmonizes heterogeneous spaces into an organized latent continuum.
+
+\subsection{Systematic Architectural and Modality Ablation Dynamics}
 
 \begin{table*}[!t]
 \centering
@@ -518,15 +547,16 @@ To understand the geometric organization learned by each encoder, we performed t
     \label{fig:ablation_chart}
 \end{figure}
 
-\subsection{Systematic Architectural \& Modality Ablation Studies}
-To rigorously quantify the individual empirical contribution of every mechanism in TriBioNode v2, we conducted comprehensive ablation experiments across classification and regression benchmarks (\textbf{Table \ref{tab:ablation}} and \textbf{Figure \ref{fig:ablation_chart}}):
+To quantify the individual contribution of each component in TriBioNode v2, we conducted ablation experiments across classification and regression benchmarks (\textbf{Table \ref{tab:ablation}} and \textbf{Figure \ref{fig:ablation_chart}}):
 \begin{enumerate}
-    \item \textbf{Necessity of 3D Spatial Geometry}: Removing View 3 (\textbf{B1}) causes FreeSolv RMSE to degrade by +14.0\% (0.741 $\to$ 0.845) and Delaney ESOL RMSE by +10.3\% (0.542 $\to$ 0.598), proving that continuous 3D solvent-accessible surface areas are mandatory for thermodynamic hydration modeling.
-    \item \textbf{Impact of 8-Channel MSGG Positional Connectivity}: Replacing 8-channel positional isomerism with standard GIN message passing (\textbf{C1}) reduces BBBP by $-1.5\%$ ROC-AUC and BACE by $-1.7\%$, confirming that explicit \textit{ortho/meta/para} connectivity prevents message-passing over-smoothing in aromatic systems.
+    \item \textbf{Impact of 3D Spatial Geometry}: Removing View 3 (\textbf{B1}) causes FreeSolv RMSE to degrade by +14.0\% (0.741 $\to$ 0.845) and Delaney ESOL RMSE by +10.3\% (0.542 $\to$ 0.598), proving that continuous 3D solvent-accessible surface areas are mandatory for thermodynamic hydration modeling.
+    \item \textbf{Role of 8-Channel MSGG Positional Connectivity}: Replacing 8-channel positional isomerism with standard GIN message passing (\textbf{C1}) reduces BBBP by $-1.5\%$ ROC-AUC and BACE by $-1.7\%$, confirming that explicit \textit{ortho/meta/para} connectivity prevents message-passing over-smoothing in aromatic systems.
     \item \textbf{Value of BRICS Motif Attention}: Eliminating BRICS motif Transformers (\textbf{C2}) reduces ROC-AUC across all bioassays, verifying that meso-scale functional groups bridge atom-level features with macromolecular binding.
     \item \textbf{Dynamic Attention Gating vs. Static Fusion}: Replacing dynamic attention gating with uniform concatenation (\textbf{D2}) incurs a statistically significant performance drop ($p < 0.01$) across all tasks, proving that fixed fusion cannot satisfy diverse physical property demands.
     \item \textbf{Multi-Modal Contrastive Pre-Regularization}: Omitting contrastive loss ($\lambda_{\text{CL}} = 0$, \textbf{D1}) degrades both classification and regression metrics, demonstrating that InfoNCE cross-view alignment prevents representation collapse.
 \end{enumerate}
+
+\subsection{Dynamic Attention Gating \& Mechanistic Interpretability}
 
 \begin{figure*}[!t]
     \centering
@@ -547,14 +577,15 @@ To rigorously quantify the individual empirical contribution of every mechanism 
     \label{fig:gating_full}
 \end{figure*}
 
-\subsection{Mechanistic Drivers of Dynamic Attention Gating Allocation}
-To determine how TriBioNode v2 adaptively shifts modality reliance across distinct chemical domains, we analyzed learned gating weights $\bm{\alpha} = [\alpha_{\text{seq}}, \alpha_{\text{graph}}, \alpha_{\text{conf}}]$ against task categories and molecular descriptors (\textbf{Figure \ref{fig:gating_full}}):
+To examine how TriBioNode v2 adaptively shifts modality reliance across chemical domains, we analyzed learned gating weights $\bm{\alpha} = [\alpha_{\text{seq}}, \alpha_{\text{graph}}, \alpha_{\text{conf}}]$ against task categories and molecular descriptors (\textbf{Figure \ref{fig:gating_full}}):
 \begin{itemize}
     \item \textbf{Quantum \& Electronic Endpoints (QM8, QM9)}: View 3 (3D EGNN) dominates with an average gating allocation of \textbf{57.2\%} (\textbf{Figure \ref{fig:gating_full}(a)}), reflecting that electronic excitation energies and orbital eigenvalues depend directly on continuous 3D Euclidean coordinates.
     \item \textbf{Thermodynamic Solubility (ESOL, FreeSolv, AqSolDB)}: View 2 (2D Hierarchical Graph + MSGG + Motifs) receives \textbf{52.3\%} weight, capturing macroscopic hydrogen bond donor/acceptor topologies and polar surface areas.
     \item \textbf{Membrane Permeability (BBBP, Caco-2)}: View 3 (\textbf{41.5\%}) and View 2 (\textbf{36.4\%}) share dominance, corresponding to the joint physical dependence of passive permeation on molecular volume and functional group polarity.
     \item \textbf{Chemical Routing by Aromaticity \& Flexibility (\textbf{Figure \ref{fig:gating_full}(b)})}: For non-aromatic, flexible aliphatic molecules ($N_{\text{arom}} = 0, F_{sp3} > 0.6$), View 3 receives dominant weighting ($\alpha_{\text{conf}} \approx 0.992$). As aromaticity increases to 3+ fused rings, the gating network dynamically quadruples attention to View 1 and View 2, as rigid planar $\pi$-systems are most effectively parameterized by 2D substructure graph connectivity.
 \end{itemize}
+
+\subsection{Cross-Modal Complementarity \& Synergistic Outlier Correction}
 
 \begin{figure*}[!t]
     \centering
@@ -563,13 +594,14 @@ To determine how TriBioNode v2 adaptively shifts modality reliance across distin
     \label{fig:cross_modal_synergy}
 \end{figure*}
 
-\subsection{Cross-Modal Complementarity \& Synergistic Outlier Correction}
-To assess representational orthogonality, we computed the Linear Centered Kernel Alignment (CKA) \cite{kornblith2019similarity} across representation spaces (\textbf{Figure \ref{fig:cross_modal_synergy}(a)}). The CKA similarity between View 1 (1D SMILES) and View 3 (3D EGNN) is \textbf{0.519}, confirming that 1D chemical grammar and 3D spatial conformation occupy substantially orthogonal representation subspaces, providing non-redundant predictive signals that the cross-attention module synthesizes.
+To evaluate representational orthogonality, we computed Linear Centered Kernel Alignment (CKA) \cite{kornblith2019similarity} across representation spaces (\textbf{Figure \ref{fig:cross_modal_synergy}(a)}). The CKA similarity between View 1 (1D SMILES) and View 3 (3D EGNN) is \textbf{0.519}, confirming that 1D chemical grammar and 3D spatial conformation occupy substantially orthogonal representation subspaces, providing non-redundant predictive signals that the cross-attention module synthesizes.
 
-\textbf{Table \ref{tab:case_studies}} and \textbf{Figure \ref{fig:cross_modal_synergy}(c)} present concrete chemical case studies where individual modalities fail, but TriBioNode v2 achieves exceptional accuracy through synergistic error compensation:
+\textbf{Table \ref{tab:case_studies}}, \textbf{Figure \ref{fig:cross_modal_synergy}(c)}, and \textbf{Figure \ref{fig:fusion_gating_synergy}} present concrete chemical case studies where individual modalities fail, but TriBioNode v2 achieves exceptional accuracy through synergistic error compensation:
 \begin{itemize}
     \item \textbf{Fenarimol Analog}: View 1 and View 2 severely underpredict aqueous solubility ($-3.16$ and $-3.54$ vs. true $-4.38$), while View 3 overpredicts it ($-5.23$). The multi-modal cross-attention mechanism reconciles these opposing vectors, achieving an absolute error of only \textbf{0.08 log mol/L}—an order of magnitude more accurate than any single view.
     \item \textbf{Xanthone Derivative}: View 2 exhibits an error of 2.06 due to complex fused pyrone rings. TriBioNode v2 integrates 3D spatial thickness and 1D language tokens to slash prediction error to \textbf{0.20 log mol/L}.
+    \item \textbf{Cyclopentadiene}: View 2 produces an error of 1.35 due to strained conjugated diene ring dynamics. TriBioNode v2 leverages 3D spatial geometry to reduce error to \textbf{0.27 log mol/L}.
+    \item \textbf{Chlorobenzene Oxadiazole}: View 1 and View 2 incur errors of 1.91 and 1.89 due to the bulky chloro-benzyl heterocyclic core. TriBioNode v2 integrates 3D conformer coordinates to cut error to \textbf{1.12 log mol/L}.
 \end{itemize}
 
 \begin{table*}[!t]
@@ -589,6 +621,15 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 \bottomrule
 \end{tabular}}
 \end{table*}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/view_fusion_dynamic_gating_synergy.png}
+    \caption{Multi-Modal Fusion, Dynamic Attention Gating Allocation, and Orthogonal Error Cancellation. (Left) Dynamic modality gating allocations $[w_1, w_2, w_3]$ showing adaptive attention distribution across molecular structural regimes: rigid aromatic systems (Anthanthrene PAH) upweight 1D and 2D topology ($w_1=12.1\%, w_2=3.5\%$), whereas flexible 3D spiro rings (Spiro-Hydantoin) route $99.7\%$ weight to 3D equivariant geometry. (Right) Orthogonal error cancellation on challenging outliers: unimodal View 1 and View 2 underpredict solubility, while View 3 overpredicts; the multi-modal fusion network neutralizes these opposing error vectors to recover true experimental solubility within $0.08\text{ log mol/L}$.}
+    \label{fig:fusion_gating_synergy}
+\end{figure*}
+
+\subsection{Epistemic Uncertainty Calibration \& Inference Latency}
 
 \begin{table}[!htbp]
 \centering
@@ -615,7 +656,6 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
     \label{fig:parity_plot}
 \end{figure}
 
-\subsection{Epistemic Uncertainty Calibration \& OOD Reliability}
 As documented in \textbf{Table \ref{tab:uncertainty}} and \textbf{Figure \ref{fig:parity_plot}}, TriBioNode v2 exhibits high calibration quality. On unseen Bemis-Murcko scaffolds, the correlation between epistemic variance $U_{\text{epistemic}}(\mathbf{x})$ and absolute test error achieves a Pearson $r = \mathbf{0.76 \pm 0.03}$. Empirical Prediction Interval Coverage (PICP) at the 95\% nominal confidence level reaches \textbf{95.4\%}, while Mean Prediction Interval Width (MPIW) expands adaptively from 1.12 (in-distribution) to 1.48 (OOD). Importantly, epistemic uncertainty serves as an autonomous classifier for out-of-distribution scaffold detection, attaining an AUROC of \textbf{89.4\%}. This capability enables screening campaigns to automatically filter out high-risk false positive predictions.
 
 \begin{table}[!htbp]
@@ -639,31 +679,30 @@ MMCL \cite{gao2026mmcl} & 48.6 M & 1.20 G & 3.2 min & 5.2 ms/mol \\
 \end{tabular}}
 \end{table}
 
-\subsection{Computational Complexity \& Inference Latency}
-As summarized in \textbf{Table \ref{tab:complexity}}, TriBioNode v2 maintains a highly efficient inference throughput of \textbf{6.4 ms per molecule} (>150 molecules per second on a single NVIDIA RTX 3090 GPU). Although incorporating 3D equivariant coordinate updates and tri-modal Transformer fusion, its computational overhead is modest (1.85 GFLOPs/mol, compared to 4.80 GFLOPs for DimeNet++). This enables high-throughput virtual screening of million-compound commercial and combinatorial chemical libraries within sub-hour execution budgets.
+As summarized in \textbf{Table \ref{tab:complexity}}, TriBioNode v2 maintains an efficient inference throughput of \textbf{6.4 ms per molecule} (>150 molecules per second on a single NVIDIA RTX 3090 GPU). Although incorporating 3D equivariant coordinate updates and tri-modal Transformer fusion, its computational overhead is modest (1.85 GFLOPs/mol, compared to 4.80 GFLOPs for DimeNet++). This enables high-throughput virtual screening of million-compound commercial and combinatorial chemical libraries within sub-hour execution budgets.
 
 % ==============================================================================
-% SECTION 6: DISCUSSION, LIMITATIONS & FUTURE DIRECTIONS
+% SECTION 6: DISCUSSION, LIMITATIONS & FUTURE PERSPECTIVES
 % ==============================================================================
-\section{Discussion, Limitations \& Future Work}
+\section{Discussion, Limitations, and Future Perspectives}
 
-\subsection{Practical Implications for Drug Discovery}
-The empirical success of TriBioNode v2 demonstrates that molecular representation learning must not treat representations as isolated silos. By dynamically bridging 1D linguistic grammar, 2D multichannel topological isomerism, and 3D spatial equivariance, the framework adapts to heterogeneous biophysical mechanisms. For computational medicinal chemists, the calibrated epistemic uncertainty head provides an automated decision threshold: predictions with high uncertainty can be directed to confirmation assays or active learning loops, conserving precious experimental resources.
+The empirical success of TriBioNode v2 underscores a core principle of computational cheminformatics: molecular representations should not be treated as isolated silos. By dynamically bridging 1D linguistic grammar, 2D multichannel topological isomerism, and 3D spatial equivariance, the framework adapts to heterogeneous biophysical mechanisms across diverse chemical property spaces.
 
-\subsection{Limitations}
-Despite its strong benchmark performance, several limitations warrant discussion:
+\noindent\textbf{Practical Implications for Drug Discovery.} In high-throughput virtual screening, TriBioNode v2 provides two major operational advantages. First, the dynamic attention gating mechanism offers interpretable diagnostic signals regarding the structural drivers of a given prediction, illuminating whether a molecule's predicted activity stems from functional group motifs, electronic surface features, or sequence patterns. Second, the calibrated epistemic uncertainty head provides an automated decision threshold: predictions accompanied by high epistemic variance can be routed to confirmatory wet-lab assays or prioritized for active learning rounds, conserving critical experimental resources.
+
+\noindent\textbf{Critical Architectural Limitations.} Despite its strong benchmark performance, several limitations warrant discussion:
 \begin{enumerate}
-    \item \textbf{Single-Conformer Approximation}: View 3 operates on a single energy-minimized conformer generated via MMFF94 force-field minimization. While computationally efficient, molecules in physiological solution exist as dynamic conformational ensembles undergoing thermal fluctuations.
+    \item \textbf{Single-Conformer Approximation}: View 3 currently operates on a single energy-minimized conformer generated via MMFF94 force-field optimization. While computationally tractable, small molecules in physiological solution exist as dynamic conformational ensembles undergoing continuous thermal fluctuations and solvent interactions.
     \item \textbf{Ensemble Training Overhead}: While inference is accelerated via parallel batch evaluation (6.4 ms/mol), training a 5-member Deep Ensemble scales computational training cost by $5\times$. Developing single-model epistemic estimators (e.g., deterministic spectral-normalized neural Gaussian processes) represents an attractive efficiency improvement.
 \end{enumerate}
 
-\subsection{Future Directions}
-Future extensions will focus on: (1) generalizing View 3 to 4D dynamic conformational ensembles generated via fast molecular dynamics or diffusion models; (2) integrating target protein pocket geometry for structure-based bioactivity prediction; and (3) coupling TriBioNode v2's encoder with conditional generative models for multi-objective de novo drug design.
+\noindent\textbf{Future Methodological Perspectives.} Future extensions of this work will explore: (1) generalizing View 3 to 4D dynamic conformational ensembles generated via fast molecular dynamics or SE(3) diffusion models; (2) incorporating target protein pocket geometry for structure-based bioactivity prediction; and (3) integrating TriBioNode v2's multi-view encoder into conditional generative models for multi-objective de novo drug design.
 
 % ==============================================================================
 % SECTION 7: CONCLUSION
 % ==============================================================================
 \section{Conclusion}
+
 In this study, we established \textbf{TriBioNode v2}, a unified tri-modal hierarchical graph-spatial deep learning architecture that systematically resolves unimodal perceptual bottlenecks, flat graph topology limitations, and static fusion constraints in molecular property prediction. By combining a 1D pre-trained ChemBERTa Transformer, a 2D 8-channel MSGG and BRICS motif bipartite graph, and a 3D $E(3)$-equivariant Euclidean EGNN conformer with dynamic attention gating and Deep Ensemble epistemic uncertainty quantification, TriBioNode v2 sets state-of-the-art benchmarks across 16 MoleculeNet and TDC datasets. Mechanistic gating analyses and Centered Kernel Alignment confirm that TriBioNode v2 adaptively aligns modality reliance with physical chemistry principles, establishing a dependable, calibrated foundation for artificial intelligence-driven drug design.
 
 % ==============================================================================
