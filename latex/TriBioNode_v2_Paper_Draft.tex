@@ -123,20 +123,22 @@ To overcome the blind spots of unimodal representations, recent studies explore 
 \centering
 \caption{Systematic Comparative Synthesis Matrix of Foundational Literature vs. TriBioNode v2.}
 \label{tab:lit_comparison}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{4pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{lcccccccl}
 \toprule
-\textbf{Model / Paper} & \textbf{Modality Views} & \textbf{Language Model} & \textbf{Substructure Graph} & \textbf{3D Conformer} & \textbf{Contrastive SSL} & \textbf{Fusion Type} & \textbf{Epistemic UQ} & \textbf{Core Benchmark (BBBP / BACE / ESOL)} \\
+\textbf{Model / Paper} & \textbf{Modality Views} & \textbf{\shortstack{Language\\Model}} & \textbf{\shortstack{Substructure\\Graph}} & \textbf{\shortstack{3D\\Conformer}} & \textbf{\shortstack{Contrastive\\SSL}} & \textbf{\shortstack{Fusion\\Type}} & \textbf{\shortstack{Epistemic\\UQ}} & \textbf{\shortstack{Core Benchmark\\(BBBP / BACE / ESOL)}} \\
 \midrule
-\textbf{MSGG} \cite{wang2020molecular} & 2D Substructure & None & 8-Channel Positional & None & None & Channel Sum & None & 75.3\%* / 87.4\% / 0.591 RMSE \\
+\textbf{MSGG} \cite{wang2020molecular} & 2D Substructure & None & 8-Ch. Positional & None & None & Channel Sum & None & 75.3\%* / 87.4\% / 0.591 RMSE \\
 \textbf{DV-IS} \cite{zhang2024dual} & 1D Seq + 2D Image & SMILES Transf. & None & None & None & Cross-Layer Attn & None & 92.4\% / 87.2\% / 0.684 RMSE \\
 \textbf{MvMRL} \cite{zhang2024mvmrl} & 1D Seq + 2D Graph + FP & Shallow TextCNN & None & None & None & Sequential Attn & None & 93.5\% / 88.1\% / 0.628 RMSE \\
 \textbf{AEGNN-M} \cite{cai2025aegnn} & 2D Graph + 3D Conf & None & None & $E(3)$-EGNN & None & Spatial Attention & None & 91.8\% / 85.9\% / 0.612 RMSE \\
 \textbf{PG-DERN} \cite{zhang2025property} & 2D Node + Subgraph & None & BRICS Subgraph & None & None & Relation Graph & None & 81.6\% (Tox21 Few-Shot) \\
 \textbf{MMCL} \cite{gao2026mmcl} & 1D Seq + 2D Graph & ChemBERTa & BRICS Subgraph & None & InfoNCE ($\mathcal{L}_{\text{CL}}$) & Static Concat & None & 94.2\% / 88.9\% / 0.578 RMSE \\
 \midrule
-\textbf{TriBioNode v2 (Ours)} & \textbf{1D + 2D + 3D Tri-Modal} & \textbf{ChemBERTa-2} & \textbf{8-ch MSGG + BRICS} & \textbf{$E(3)$-EGNN (RBF)} & \textbf{Tri-Modal InfoNCE} & \textbf{Dynamic Attention} & \textbf{Deep Ensemble} & \textbf{95.6\% / 90.4\% / 0.542 RMSE} \\
+\textbf{TriBioNode v2 (Ours)} & \textbf{\shortstack{1D + 2D + 3D\\Tri-Modal}} & \textbf{ChemBERTa-2} & \textbf{\shortstack{8-ch MSGG\\+ BRICS}} & \textbf{\shortstack{$E(3)$-EGNN\\(RBF)}} & \textbf{\shortstack{Tri-Modal\\InfoNCE}} & \textbf{\shortstack{Dynamic\\Attention}} & \textbf{\shortstack{Deep\\Ensemble}} & \textbf{\shortstack{95.6\% / 90.4\% /\\0.542 RMSE}} \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -411,8 +413,10 @@ Models were optimized using AdamW ($\beta_1 = 0.9, \beta_2 = 0.999$, weight deca
 \centering
 \caption{Comparative Classification Performance on MoleculeNet Benchmarks (Scaffold Split, ROC-AUC \% $\uparrow$).}
 \label{tab:classification}
+\renewcommand{\arraystretch}{1.18}
+\setlength{\tabcolsep}{4pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{llccccccc}
 \toprule
 \textbf{Model Architecture} & \textbf{Category} & \textbf{BBBP} & \textbf{BACE} & \textbf{ClinTox} & \textbf{Tox21} & \textbf{SIDER} & \textbf{HIV} & \textbf{Average ROC-AUC} \\
@@ -443,8 +447,10 @@ DimeNet++ \cite{gasteiger2020directional} & 3D Geometric & 86.9 $\pm$ 0.8 & 81.5
 \centering
 \caption{Comparative Regression Performance on Physical Chemistry \& Quantum Benchmarks (Scaffold Split, RMSE $\downarrow$).}
 \label{tab:regression}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{6pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{lcccccc}
 \toprule
 \textbf{Model Architecture} & \textbf{Delaney ESOL} & \textbf{FreeSolv} & \textbf{Lipophilicity} & \textbf{QM8} & \textbf{QM9 ($\epsilon_{\text{gap}}$)} & \textbf{Average Rank} \\
@@ -467,11 +473,13 @@ DimeNet++ \cite{gasteiger2020directional} & 0.648 $\pm$ 0.022 & 0.992 $\pm$ 0.04
 \centering
 \caption{Extended Evaluation on Therapeutics Data Commons (TDC) ADMET Pharmacokinetic Benchmarks.}
 \label{tab:tdc_admet}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{6pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Model Architecture} & \textbf{Ames Mutagenicity (ROC-AUC $\uparrow$)} & \textbf{CYP3A4 Veith (ROC-AUC $\uparrow$)} & \textbf{hERG Central (ROC-AUC $\uparrow$)} & \textbf{AqSolDB (RMSE $\downarrow$)} & \textbf{Caco-2 Wang (MAE $\downarrow$)} \\
+\textbf{Model Architecture} & \textbf{\shortstack{Ames Mutagenicity\\(ROC-AUC $\uparrow$)}} & \textbf{\shortstack{CYP3A4 Veith\\(ROC-AUC $\uparrow$)}} & \textbf{\shortstack{hERG Central\\(ROC-AUC $\uparrow$)}} & \textbf{\shortstack{AqSolDB\\(RMSE $\downarrow$)}} & \textbf{\shortstack{Caco-2 Wang\\(MAE $\downarrow$)}} \\
 \midrule
 ChemBERTa-2 \cite{chithrananda2020chemberta} & 81.2 $\pm$ 0.6 & 83.4 $\pm$ 0.5 & 80.5 $\pm$ 0.7 & 1.124 $\pm$ 0.035 & 0.384 $\pm$ 0.012 \\
 D-MPNN \cite{yang2019analyzing} & 83.5 $\pm$ 0.5 & 85.8 $\pm$ 0.4 & 82.9 $\pm$ 0.5 & 0.982 $\pm$ 0.028 & 0.342 $\pm$ 0.010 \\
@@ -493,7 +501,7 @@ On extended TDC ADMET pharmacokinetic benchmarks (\textbf{Table \ref{tab:tdc_adm
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.30\textheight,keepaspectratio]{../figures/12_multiview_comparative_performance.png}
+    \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{../figures/12_multiview_comparative_performance.png}
     \caption{Multi-Modal Comparative Performance Analysis on Delaney Aqueous Solubility (ESOL). (a) Bar chart comparison of RMSE, MAE, and $R^2$ across single-view baselines and TriBioNode v2 variants. (b) Kernel Density Estimation (KDE) of absolute errors $|y - \hat{y}|$, demonstrating a sharp leftward shift for TriBioNode v2 towards zero error. (c) Regression Error Characteristic (REC) curve, showing that TriBioNode v2 bounds a strictly higher percentage of test molecules across all error tolerances. (d) Residual plot ($y - \hat{y}$) across the solubility spectrum, highlighting flattened residual bias across extreme values.}
     \label{fig:multiview_perf}
 \end{figure*}
@@ -504,7 +512,7 @@ The error density distribution (\textbf{Figure \ref{fig:multiview_perf}(b)}) dem
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.20\textheight,keepaspectratio]{../figures/13_multiview_latent_manifold_tsne.png}
+    \includegraphics[width=\textwidth,height=0.18\textheight,keepaspectratio]{../figures/13_multiview_latent_manifold_tsne.png}
     \caption{Multi-View Latent Manifold Topology via t-SNE Dimensionality Reduction. Embeddings for 113 scaffold-split test molecules colored by experimental aqueous solubility (Delaney logS). (a) View 1 (1D ChemBERTa) captures localized sequence syntax. (b) View 2 (2D Hierarchical Graph) reflects scaffold clustering. (c) View 3 (3D EGNN) preserves spatial geometric surface area. (d) TriBioNode v2 (Fused) organizes molecules along a continuous solubility gradient manifold.}
     \label{fig:latent_tsne}
 \end{figure*}
@@ -517,8 +525,10 @@ t-SNE dimensionality reduction of latent spaces (\textbf{Figure \ref{fig:latent_
 \centering
 \caption{Systematic Multi-Factor Architectural Component \& Modality Ablation Study.}
 \label{tab:ablation}
+\renewcommand{\arraystretch}{1.20}
+\setlength{\tabcolsep}{6pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{clcccc}
 \toprule
 \textbf{Config ID} & \textbf{Architecture Variant Tested} & \textbf{BBBP (ROC-AUC $\uparrow$)} & \textbf{BACE (ROC-AUC $\uparrow$)} & \textbf{ESOL (RMSE $\downarrow$)} & \textbf{FreeSolv (RMSE $\downarrow$)} \\
@@ -564,14 +574,14 @@ To quantify the individual contribution of each component in TriBioNode v2, we c
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/09_dynamic_view_gating_allocation.png}
+        \includegraphics[width=\textwidth,height=0.23\textheight,keepaspectratio]{../figures/09_dynamic_view_gating_allocation.png}
         \caption{Dynamic Attention View Gating distributions ($\bm{\alpha}$) across diverse biophysical, physicochemical, and quantum mechanical tasks.}
         \label{fig:gating_allocation}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/14_dynamic_gating_mechanistic_analysis.png}
+        \includegraphics[width=\textwidth,height=0.23\textheight,keepaspectratio]{../figures/14_dynamic_gating_mechanistic_analysis.png}
         \caption{Mechanistic correlation of dynamic gating weights with aromatic ring count ($N_{\text{arom}}$), lipophilicity ($\log P$), and molecular flexibility ($F_{sp3}$).}
         \label{fig:gating_mechanisms}
     \end{subfigure}
@@ -591,7 +601,7 @@ To examine how TriBioNode v2 adaptively shifts modality reliance across chemical
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/15_cross_modal_complementarity_and_synergy.png}
+    \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{../figures/15_cross_modal_complementarity_and_synergy.png}
     \caption{Cross-Modal Complementarity, Linear Centered Kernel Alignment (CKA) Matrix, and Synergistic Outlier Correction. (a) Linear CKA similarity matrix across 1D, 2D, 3D, and Fused representation spaces. (b) Single-view error correlation scatter plot. (c) Synergistic outlier correction case studies showing how opposing unimodal error vectors are reconciled by TriBioNode v2.}
     \label{fig:cross_modal_synergy}
 \end{figure*}
@@ -610,8 +620,10 @@ To evaluate representational orthogonality, we computed Linear Centered Kernel A
 \centering
 \caption{Synergistic Outlier Correction Case Studies on Delaney ESOL Scaffold Test Set.}
 \label{tab:case_studies}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{6pt}
 \small
-\adjustbox{max width=\textwidth}{
+\adjustbox{width=\textwidth}{
 \begin{tabular}{llcccccc}
 \toprule
 \textbf{Compound Class} & \textbf{Canonical SMILES} & \textbf{Exp. $y$} & \textbf{View 1 AE} & \textbf{View 2 AE} & \textbf{View 3 AE} & \textbf{TriBioNode v2 AE} & \textbf{Synergy Gain} \\
@@ -626,7 +638,7 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.32\textheight,keepaspectratio]{../figures/view_fusion_dynamic_gating_synergy.png}
+    \includegraphics[width=\textwidth,height=0.25\textheight,keepaspectratio]{../figures/view_fusion_dynamic_gating_synergy.png}
     \caption{Multi-Modal Fusion, Dynamic Attention Gating Allocation, and Orthogonal Error Cancellation. (Left) Dynamic modality gating allocations $[w_1, w_2, w_3]$ showing adaptive attention distribution across molecular structural regimes: rigid aromatic systems (Anthanthrene PAH) upweight 1D and 2D topology ($w_1=12.1\%, w_2=3.5\%$), whereas flexible 3D spiro rings (Spiro-Hydantoin) route $99.7\%$ weight to 3D equivariant geometry. (Right) Orthogonal error cancellation on challenging outliers: unimodal View 1 and View 2 underpredict solubility, while View 3 overpredicts; the multi-modal fusion network neutralizes these opposing error vectors to recover true experimental solubility within $0.08\text{ log mol/L}$.}
     \label{fig:fusion_gating_synergy}
 \end{figure*}
@@ -637,8 +649,10 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 \centering
 \caption{Epistemic Uncertainty Calibration Metrics on Scaffold-OOD Test Sets.}
 \label{tab:uncertainty}
+\renewcommand{\arraystretch}{1.20}
+\setlength{\tabcolsep}{4pt}
 \small
-\adjustbox{max width=0.48\textwidth}{
+\adjustbox{width=\columnwidth}{
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric Evaluated} & \textbf{In-Distribution} & \textbf{Scaffold-OOD} \\
@@ -653,7 +667,7 @@ Chlorobenzene Oxadiazole & \texttt{CC1(C)CON(Cc2ccccc2Cl)C1=O} & -2.34 & 1.91 & 
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\columnwidth]{../figures/10_parity_plot_with_epistemic_uncertainty.png}
+    \includegraphics[width=\columnwidth,height=0.22\textheight,keepaspectratio]{../figures/10_parity_plot_with_epistemic_uncertainty.png}
     \caption{Parity plots with epistemic uncertainty error bounds ($2\sigma$) for Delaney ESOL and FreeSolv test sets, demonstrating reliable error bounds on scaffold-shifted molecules.}
     \label{fig:parity_plot}
 \end{figure}
@@ -664,8 +678,10 @@ As documented in \textbf{Table \ref{tab:uncertainty}} and \textbf{Figure \ref{fi
 \centering
 \caption{Model Complexity, FLOPs, and Inference Throughput (Batch Size = 64, RTX 3090 GPU).}
 \label{tab:complexity}
+\renewcommand{\arraystretch}{1.20}
+\setlength{\tabcolsep}{3pt}
 \small
-\adjustbox{max width=0.48\textwidth}{
+\adjustbox{width=\columnwidth}{
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Architecture} & \textbf{Params (M)} & \textbf{GFLOPs} & \textbf{Time/Epoch} & \textbf{Latency} \\
