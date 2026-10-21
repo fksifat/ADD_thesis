@@ -552,12 +552,12 @@ t-SNE dimensionality reduction of latent spaces (\textbf{Figure \ref{fig:latent_
 \end{tabular}}
 \end{table*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
     \centering
-    \includegraphics[width=\columnwidth]{../figures/11_systematic_architecture_ablation.png}
+    \includegraphics[width=0.88\textwidth,height=0.22\textheight,keepaspectratio]{../figures/11_systematic_architecture_ablation.png}
     \caption{Systematic Architectural Ablation Study illustrating test set RMSE degradation across isolated single-view, dual-view, and architectural ablations relative to the complete TriBioNode v2 framework.}
     \label{fig:ablation_chart}
-\end{figure}
+\end{figure*}
 
 To quantify the individual contribution of each component in TriBioNode v2, we conducted ablation experiments across classification and regression benchmarks (\textbf{Table \ref{tab:ablation}} and \textbf{Figure \ref{fig:ablation_chart}}):
 \begin{enumerate}
@@ -572,16 +572,16 @@ To quantify the individual contribution of each component in TriBioNode v2, we c
 
 \begin{figure*}[!t]
     \centering
-    \begin{subfigure}[b]{0.48\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=\textwidth,height=0.23\textheight,keepaspectratio]{../figures/09_dynamic_view_gating_allocation.png}
+        \includegraphics[width=0.78\textwidth]{../figures/09_dynamic_view_gating_allocation.png}
         \caption{Dynamic Attention View Gating distributions ($\bm{\alpha}$) across diverse biophysical, physicochemical, and quantum mechanical tasks.}
         \label{fig:gating_allocation}
     \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.48\textwidth}
+    \vspace{0.6em}
+    \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=\textwidth,height=0.23\textheight,keepaspectratio]{../figures/14_dynamic_gating_mechanistic_analysis.png}
+        \includegraphics[width=0.98\textwidth]{../figures/14_dynamic_gating_mechanistic_analysis.png}
         \caption{Mechanistic correlation of dynamic gating weights with aromatic ring count ($N_{\text{arom}}$), lipophilicity ($\log P$), and molecular flexibility ($F_{sp3}$).}
         \label{fig:gating_mechanisms}
     \end{subfigure}
@@ -601,7 +601,7 @@ To examine how TriBioNode v2 adaptively shifts modality reliance across chemical
 
 \begin{figure*}[!t]
     \centering
-    \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{../figures/15_cross_modal_complementarity_and_synergy.png}
+    \includegraphics[width=0.94\textwidth]{../figures/15_cross_modal_complementarity_and_synergy.png}
     \caption{Cross-Modal Complementarity, Linear Centered Kernel Alignment (CKA) Matrix, and Synergistic Outlier Correction. (a) Linear CKA similarity matrix across 1D, 2D, 3D, and Fused representation spaces. (b) Single-view error correlation scatter plot. (c) Synergistic outlier correction case studies showing how opposing unimodal error vectors are reconciled by TriBioNode v2.}
     \label{fig:cross_modal_synergy}
 \end{figure*}
